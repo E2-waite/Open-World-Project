@@ -8,6 +8,8 @@
 //////////////
 // INCLUDES //
 //////////////
+#include <string> 
+#include <cstring>
 #include <time.h>
 #include "d3dclass.h"
 #include "cameraclass.h"
@@ -42,28 +44,25 @@ public:
 	~GraphicsClass();
 	bool Initialize(int, int, HWND);
 	void Shutdown();
-	bool Frame(int,int);
+	bool Update(int,int);
 	void SetCamPos(float, float, float);
 	void CamPosX(float);
 	void CamPosY(float);
 	void CamPosZ(float);
 	void CamRotX(float);
 	void CamRotY(float);
-	bool SetupNPCs();
+
 private:
 	bool Render(float);
 
 private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
-	NPC* npc;
 	Chunk** chunk;
 	LightShaderClass* m_LightShader;
 	TextureShaderClass* m_TextureShader;
 	LightClass* m_Light;
 	BitmapClass* m_Bitmap;
-	string model_file;
-	int num_npcs = 10;
-	int chunks_x = 10, chunks_y = 10;
+	int chunks_x = 1, chunks_y = 1;
 };
 #endif

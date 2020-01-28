@@ -190,7 +190,7 @@ bool SystemClass::Frame()
 	m_Input->GetMouseLocation(mouseX, mouseY);
 
 
-	result = m_Graphics->Frame(mouseX, mouseY);
+	result = m_Graphics->Update(mouseX, mouseY);
 	if (!result)
 	{
 		return false;

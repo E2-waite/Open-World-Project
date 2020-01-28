@@ -66,15 +66,19 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	for (int i = 0; i < chunks_x; ++i)
 		chunk[i] = new Chunk[chunks_y];
 
-
-
-	result = SetupNPCs();
-	if (!result)
+	for (int i = 0; i < chunks_x; ++i)
 	{
-		MessageBox(hwnd, "Could not initialize the NPC's.", "Error", MB_OK);
-		return false;
+		for (int j = 0; j < chunks_y; ++j)
+		{
+			result = chunk[i][j].Initialize(m_D3D->GetDevice());
+			if (!result)
+			{
+				MessageBox(hwnd, "Could not initialize chunk", "Error", MB_OK);
+				return false;
+			}
+		}
 	}
-
+	
 	// Create the light shader object.
 	m_TextureShader = new TextureShaderClass;
 	if (!m_TextureShader)
@@ -136,24 +140,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	return true;
 }
 
-bool GraphicsClass::SetupNPCs()
-{
-	npc = new NPC[num_npcs];
-	if (!npc)
-	{
-		return false;
-	}
-	srand(time(NULL));
-	float x_pos = 0;
-	for (int i = 0; i < num_npcs; i++)
-	{
-		float rand_x = rand() % 50 + 0;
-		float rand_y = rand() % 50 + 0;
-		npc[i].Initialize(m_D3D->GetDevice(), "Data/Cube.txt", "Data/npc.dds", D3DXVECTOR3(0, 0, 0), D3DXVECTOR3(rand_x, 0, rand_y),
-			D3DXVECTOR3(0, 0, 0));
-		x_pos += 3;
-	}
-}
+
 
 void GraphicsClass::Shutdown()
 {
@@ -201,7 +188,7 @@ void GraphicsClass::Shutdown()
 }
 
 
-bool GraphicsClass::Frame(int mouse_x, int mouse_y)
+bool GraphicsClass::Update(int mouse_x, int mouse_y)
 {
 	bool result;
 	static float rotation = 0.0f;
@@ -212,9 +199,12 @@ bool GraphicsClass::Frame(int mouse_x, int mouse_y)
 		rotation -= 360.0f;
 	}
 
-	for (int i = 0; i < num_npcs; i++)
+	for (int i = 0; i < chunks_x; ++i)
 	{
-		npc[i].Frame();
+		for (int j = 0; j < chunks_y; ++j)
+		{
+			chunk[i][j].Update();
+		}
 	}
 
 	// Call the render function each frame
@@ -234,7 +224,6 @@ bool GraphicsClass::Render(float rotation)
 	D3DXMATRIX viewMatrix, projectionMatrix, worldMatrix, orthoMatrix, rotMatrix;
 	D3DXVECTOR3 cam_rotation;
 	bool result;
-	//m_Leaf[0].GetWorldMatrix()
 	float yaw, pitch, roll;
 	cam_rotation = m_Camera->GetRotation();
 
@@ -257,26 +246,18 @@ bool GraphicsClass::Render(float rotation)
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 	m_D3D->GetOrthoMatrix(orthoMatrix);
 
-	for (int i = 0; i < num_npcs; i++)
+	for (int i = 0; i < chunks_x; ++i)
 	{
-		npc[i].Render(m_D3D->GetDeviceContext());
-		result = m_LightShader->Render(m_D3D->GetDeviceContext(), npc[i].GetIndexCount(), npc[i].GetWorldMatrix(), viewMatrix,
-			projectionMatrix, npc[i].GetTexture(), m_Light->GetDirection(), m_Light->GetAmbientColour(), m_Light->GetDiffuseColour());
-	}
-
-	if (!result)
-	{
-		return false;
+		for (int j = 0; j < chunks_y; ++j)
+		{
+			chunk[i][j].Render(m_D3D->GetDeviceContext(), m_LightShader, m_Light, viewMatrix, projectionMatrix);
+		}
 	}
 
 	// Turn off the Z buffer to begin all 2D rendering.
 	m_D3D->TurnZBufferOff();
 	// Put the bitmap vertex and index buffers on the graphics pipeline to prepare them for drawing.
 	//result = m_Bitmap->Render(m_D3D->GetDeviceContext(), 100, 100);
-	if (!result)
-	{
-		return false;
-	}
 
 	// Render the bitmap with the texture shader.
 	result = m_TextureShader->Render(m_D3D->GetDeviceContext(), m_Bitmap->GetIndexCount(), rotMatrix, viewMatrix, orthoMatrix, m_Bitmap->GetTexture());
