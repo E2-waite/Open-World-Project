@@ -10,10 +10,12 @@ Chunk::~Chunk()
 
 }
 
-bool Chunk::Initialize(ID3D11Device* device)
+bool Chunk::Initialize(ID3D11Device* device, int x, int y)
 {
+	pos[0] = x, pos[1] = y;
 	bool result = true;
 	result = SetupNPCs(device);
+
 	if (!result) return false;
 }
 
@@ -29,10 +31,7 @@ bool Chunk::SetupNPCs(ID3D11Device* device)
 	float x_pos = 0;
 	for (int i = 0; i < num_npcs; i++)
 	{
-		float rand_x = rand() % 50 + 0;
-		float rand_y = rand() % 50 + 0;
-		result = npc[i].Initialize(device, "Data/Cube.txt", "Data/npc.dds", D3DXVECTOR3(0, 0, 0), D3DXVECTOR3(rand_x, 0, rand_y),
-			D3DXVECTOR3(0, 0, 0));
+		result = npc[i].Initialize(device, "Data/Cube.txt", "Data/npc.dds", pos[0] * chunk_size, pos[1] * chunk_size, chunk_size);
 		if (!result) return false;
 		x_pos += 3;
 	}

@@ -15,19 +15,25 @@ NPC::~NPC()
 
 }
 
-bool NPC::Initialize(ID3D11Device* device, const char* modelFilename, const char* textureFilename, D3DXVECTOR3 rot, D3DXVECTOR3 pos, D3DXVECTOR3 scl)
+bool NPC::Initialize(ID3D11Device* device, const char* modelFilename, const char* textureFilename, int x, int y, int size)
 {
+	x_offset = x, y_offset = y, chunk_size = size;
 	model = new Model;
 	if (!model)
 	{
 		return false;
 	}
-	model->Initialize(device, modelFilename, textureFilename, rot, pos, scl);
 
-	float rand_x = rand() % 50 + 0;
-	float rand_y = rand() % 50 + 0;
-	target_pos = D3DXVECTOR3(rand_x, 0, rand_y);
-	start_pos = pos;
+	// Initialize model in random location within current chunk
+	float rand_x = rand() % chunk_size + 0;
+	float rand_y = rand() % chunk_size + 0;
+	start_pos = D3DXVECTOR3(rand_x + x_offset, 0, rand_y + y_offset);
+	model->Initialize(device, modelFilename, textureFilename, D3DXVECTOR3(0, 0, 0), start_pos, D3DXVECTOR3(0, 0, 0));
+
+	// Find random movement target within current chunk
+	rand_x = rand() % chunk_size + 0;
+	rand_y = rand() % chunk_size + 0;
+	target_pos = D3DXVECTOR3(rand_x + x_offset, 0, rand_y + y_offset);
 	float distance = sqrt(pow(target_pos.x - start_pos.x, 2) + pow(target_pos.z - start_pos.z, 2));
 	direction = D3DXVECTOR3((target_pos.x - start_pos.x) / distance, 0, (target_pos.z - start_pos.z) / distance);
 	moving = true;
@@ -46,6 +52,11 @@ void NPC::Render(ID3D11DeviceContext* deviceContext)
 
 void NPC::Frame()
 {
+	Move();
+}
+
+void NPC::Move()
+{
 	D3DXVECTOR3 current_dist = D3DXVECTOR3(model->GetPosition().x - target_pos.x, 0, model->GetPosition().z - target_pos.z);
 	if (moving)
 	{
@@ -53,9 +64,9 @@ void NPC::Frame()
 		if (current_dist.x <= 0.5f && current_dist.z <= 0.5f)
 		{
 			moving = false;
-			float rand_x = rand() % 50 + 0;
-			float rand_y = rand() % 50 + 0;
-			target_pos = D3DXVECTOR3(rand_x, 0, rand_y);
+			float rand_x = rand() % chunk_size + 0;
+			float rand_y = rand() % chunk_size + 0;
+			target_pos = D3DXVECTOR3(rand_x + x_offset, 0, rand_y + y_offset);
 			start_pos = model->GetPosition();
 			float distance = sqrt(pow(target_pos.x - start_pos.x, 2) + pow(target_pos.z - start_pos.z, 2));
 			direction = D3DXVECTOR3((target_pos.x - start_pos.x) / distance, 0, (target_pos.z - start_pos.z) / distance);

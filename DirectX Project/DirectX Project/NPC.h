@@ -18,10 +18,11 @@ public:
 	NPC();
 	NPC(const NPC&);
 	~NPC();
-	bool Initialize(ID3D11Device*, const char*, const char*, D3DXVECTOR3 rot, D3DXVECTOR3 pos, D3DXVECTOR3 scl);
+	bool Initialize(ID3D11Device*, const char*, const char*, int, int, int);
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 	void Frame();
+	void Move();
 	int GetIndexCount();
 	D3DXMATRIX GetWorldMatrix();
 	ID3D11ShaderResourceView* GetTexture();
@@ -35,5 +36,7 @@ private:
 	float speed = 5;
 	float elapsed = 0.01f;
 	bool moving = false;
+	int x_offset, y_offset;
+	int chunk_size;
 };
 

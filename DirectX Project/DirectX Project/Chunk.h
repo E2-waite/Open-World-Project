@@ -9,7 +9,7 @@ class Chunk
 public:
 	Chunk();
 	~Chunk();
-	bool Initialize(ID3D11Device*);
+	bool Initialize(ID3D11Device*, int, int);
 	void Shutdown();
 	void Update();
 	void Render(ID3D11DeviceContext*, LightShaderClass*, LightClass*, D3DXMATRIX, D3DXMATRIX);
@@ -18,4 +18,6 @@ private:
 	Model* floor;
 	NPC* npc;
 	int num_npcs = 10;
+	int pos[2];
+	int chunk_size = 25;
 };

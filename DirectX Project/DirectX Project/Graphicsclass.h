@@ -63,6 +63,6 @@ private:
 	TextureShaderClass* m_TextureShader;
 	LightClass* m_Light;
 	BitmapClass* m_Bitmap;
-	int chunks_x = 1, chunks_y = 1;
+	int chunks_x = 2, chunks_y = 2;
 };
 #endif

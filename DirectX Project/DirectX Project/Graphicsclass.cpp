@@ -70,7 +70,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	{
 		for (int j = 0; j < chunks_y; ++j)
 		{
-			result = chunk[i][j].Initialize(m_D3D->GetDevice());
+			result = chunk[i][j].Initialize(m_D3D->GetDevice(), i, j);
 			if (!result)
 			{
 				MessageBox(hwnd, "Could not initialize chunk", "Error", MB_OK);
