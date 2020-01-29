@@ -138,6 +138,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="NPC.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Systemclass.cpp" />
     <ClCompile Include="Textureclass.cpp" />
     <ClCompile Include="Textureshaderclass.cpp" />
@@ -161,6 +162,7 @@
     <ClInclude Include="Lightshaderclass.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="NPC.h" />
+    <ClInclude Include="Player.h" />
     <ClInclude Include="Systemclass.h" />
     <ClInclude Include="Textureclass.h" />
     <ClInclude Include="Textureshaderclass.h" />

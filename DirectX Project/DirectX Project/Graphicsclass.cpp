@@ -79,6 +79,14 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		}
 	}
 	
+	player = new Player;
+	result = player->Initialize(m_D3D->GetDevice());
+	if (!result)
+	{
+		MessageBox(hwnd, "Could not initialize player", "Error", MB_OK);
+		return false;
+	}
+
 	// Create the light shader object.
 	m_TextureShader = new TextureShaderClass;
 	if (!m_TextureShader)
@@ -207,14 +215,14 @@ bool GraphicsClass::Update(int mouse_x, int mouse_y)
 		}
 	}
 
+	player->Update(D3DXVECTOR3(m_Camera->GetPosition().x, 0, m_Camera->GetPosition().z));
+
 	// Call the render function each frame
 	result = Render(rotation);
 	if (!result)
 	{
 		return false;
 	}
-
-
 	return true;
 }
 
@@ -234,25 +242,29 @@ bool GraphicsClass::Render(float rotation)
 
 	D3DXMatrixRotationYawPitchRoll(&rotMatrix, yaw, pitch, roll);
 
-	// Clear the buffers to begin the scene.
 	m_D3D->BeginScene(0.1f, 0.1f, 0.1f, 1.0f);
 
-	// Generate the view matrix based on the camera's position.
 	m_Camera->Render();
 
-	// Get the world, view, and projection matrices from the camera and d3d objects.
 	m_Camera->GetViewMatrix(viewMatrix);
 	m_D3D->GetWorldMatrix(worldMatrix);
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 	m_D3D->GetOrthoMatrix(orthoMatrix);
 
+	// Render chunks if player is in range
 	for (int i = 0; i < chunks_x; ++i)
 	{
 		for (int j = 0; j < chunks_y; ++j)
 		{
-			chunk[i][j].Render(m_D3D->GetDeviceContext(), m_LightShader, m_Light, viewMatrix, projectionMatrix);
+			if (chunk[i][j].CheckRange(player->Position()))
+			{
+				chunk[i][j].Render(m_D3D->GetDeviceContext(), m_LightShader, m_Light, viewMatrix, projectionMatrix);
+			}
 		}
 	}
+
+	player->Render(m_D3D->GetDeviceContext(), m_LightShader, m_Light, viewMatrix, projectionMatrix);
+
 
 	// Turn off the Z buffer to begin all 2D rendering.
 	m_D3D->TurnZBufferOff();

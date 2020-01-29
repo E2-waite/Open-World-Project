@@ -345,7 +345,7 @@ bool Model::SetScale(float x, float y, float z)
 
 D3DXVECTOR3 Model::GetPosition()
 {
-	return D3DXVECTOR3(position.x, position.y, position.z);
+	return position;
 }
 
 D3DXVECTOR3 Model::GetRotation()

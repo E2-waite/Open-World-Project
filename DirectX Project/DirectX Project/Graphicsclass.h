@@ -19,6 +19,7 @@
 #include "bitmapclass.h"
 #include "NPC.h"
 #include "Chunk.h"
+#include "Player.h"
 
 #include "imconfig.h"
 #include "IMGUI\\imgui.h"
@@ -59,6 +60,7 @@ private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
 	Chunk** chunk;
+	Player* player;
 	LightShaderClass* m_LightShader;
 	TextureShaderClass* m_TextureShader;
 	LightClass* m_Light;
