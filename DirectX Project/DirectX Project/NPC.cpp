@@ -28,7 +28,7 @@ bool NPC::Initialize(ID3D11Device* device, const char* modelFilename, const char
 	float rand_x = rand() % chunk_size + 0;
 	float rand_y = rand() % chunk_size + 0;
 	start_pos = D3DXVECTOR3(rand_x + x_offset, 0, rand_y + y_offset);
-	model->Initialize(device, modelFilename, textureFilename, D3DXVECTOR3(0, 0, 0), start_pos, D3DXVECTOR3(0, 0, 0));
+	model->Initialize(device, modelFilename, textureFilename, D3DXVECTOR3(0, 0, 0), start_pos, D3DXVECTOR3(1, 1, 1));
 
 	// Find random movement target within current chunk
 	rand_x = rand() % chunk_size + 0;

@@ -31,7 +31,7 @@ bool Model::Initialize(ID3D11Device* device, const char* modelFilename, const ch
 	start_pos = pos;
 	rotation = start_rot;
 	position = start_pos;
-
+	scale = scl;
 	// Load in the model data.
 	result = LoadModel(modelFilename);
 	if (!result)
@@ -339,9 +339,7 @@ bool Model::SetRot(float x, float y, float z)
 
 bool Model::SetScale(float x, float y, float z)
 {
-	x_scl = x;
-	y_scl = y;
-	z_scl = z;
+	scale = D3DXVECTOR3(x, y, z);
 	return true;
 }
 
@@ -371,7 +369,7 @@ void Model::UpdateMatrix()
 
 	D3DXMatrixRotationYawPitchRoll(&rotationMatrix, yaw, pitch, roll);
 	D3DXMatrixTranslation(&positionMatrix, position.x, position.y, position.z);
-	D3DXMatrixScaling(&scaleMatrix, x_scl, y_scl, z_scl);
+	D3DXMatrixScaling(&scaleMatrix, scale.x, scale.y, scale.z);
 
 	m_worldMatrix = scaleMatrix * rotationMatrix * positionMatrix;
 }
@@ -482,5 +480,5 @@ int Model::GetIndCount()
 
 float Model::GetHeight()
 {
-	return height * y_scl;
+	return height * scale.y;
 }

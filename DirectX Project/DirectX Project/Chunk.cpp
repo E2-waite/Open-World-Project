@@ -13,9 +13,12 @@ Chunk::~Chunk()
 bool Chunk::Initialize(ID3D11Device* device, int x, int y)
 {
 	pos[0] = x, pos[1] = y;
+	floor = new Model;
+	floor->Initialize(device, "Data/Floor.txt", "Data/Floor.dds", D3DXVECTOR3(0, 0, 0), 
+		D3DXVECTOR3(pos[0] * chunk_size, -0.5, pos[1] * chunk_size), D3DXVECTOR3(chunk_size, chunk_size, chunk_size));
+
 	bool result = true;
 	result = SetupNPCs(device);
-
 	if (!result) return false;
 }
 
@@ -47,6 +50,11 @@ void Chunk::Update()
 
 void Chunk::Render(ID3D11DeviceContext* deviceContext, LightShaderClass* light_shader, LightClass* light, D3DXMATRIX view_matrix, D3DXMATRIX projection_matrix)
 {
+
+	floor->Render(deviceContext);
+	light_shader->Render(deviceContext, floor->GetIndexCount(), floor->GetWorldMatrix(), view_matrix,
+		projection_matrix, floor->GetTexture(), light->GetDirection(), light->GetAmbientColour(), light->GetDiffuseColour());
+
 	for (int i = 0; i < num_npcs; i++)
 	{
 		npc[i].Render(deviceContext);

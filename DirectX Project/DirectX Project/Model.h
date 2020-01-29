@@ -79,7 +79,7 @@ private:
 	D3DXVECTOR3 rotation;
 	D3DXVECTOR3 start_pos;
 	D3DXVECTOR3 position;
-	float x_scl = 1, y_scl = 1, z_scl = 1;
+	D3DXVECTOR3 scale;
 	int num_polygons;
 	float height = 0;
 };
