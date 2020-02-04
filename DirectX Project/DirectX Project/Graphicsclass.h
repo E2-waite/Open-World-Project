@@ -11,6 +11,8 @@
 #include <string> 
 #include <cstring>
 #include <time.h>
+#include <iostream>
+#include <fstream>
 #include "d3dclass.h"
 #include "cameraclass.h"
 #include "Lightshaderclass.h"
@@ -20,7 +22,7 @@
 #include "NPC.h"
 #include "Chunk.h"
 #include "Player.h"
-
+#include "Binary.h"
 #include "imconfig.h"
 #include "IMGUI\\imgui.h"
 #include "IMGUI\\imgui_impl_win32.h"
@@ -52,7 +54,7 @@ public:
 	void CamPosZ(float);
 	void CamRotX(float);
 	void CamRotY(float);
-
+	void ReadTest();
 private:
 	bool Render(float);
 
@@ -66,5 +68,6 @@ private:
 	LightClass* m_Light;
 	BitmapClass* m_Bitmap;
 	int chunks_x = 2, chunks_y = 2;
+	Binary* binary;
 };
 #endif

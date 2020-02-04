@@ -144,6 +144,18 @@ bool SystemClass::Frame()
 		return false;
 	}
 
+	if (m_Input->CheckKey(DIK_1))
+	{
+		m_Graphics->ReadTest();
+	}
+	if (m_Input->CheckKey(DIK_2))
+	{
+		m_Graphics->Write1();
+	}
+	if (m_Input->CheckKey(DIK_3))
+	{
+		m_Graphics->Write2();
+	}
 	if (m_Input->CheckKey(DIK_W))
 	{
 		m_Graphics->CamPosZ(0.5f);

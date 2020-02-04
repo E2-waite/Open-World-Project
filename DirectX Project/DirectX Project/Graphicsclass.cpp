@@ -61,6 +61,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Set the initial position of the camera.
 	m_Camera->SetPosition(25.0f, 50.0f, 25.0f);
 
+	binary = new Binary("chunk.bin");
+
 	// Dynamically set up 2D chunk array
 	chunk = new Chunk*[chunks_x];
 	for (int i = 0; i < chunks_x; ++i)
@@ -315,4 +317,17 @@ void GraphicsClass::CamRotY(float x)
 void GraphicsClass::CamRotX(float y)
 {
 	m_Camera->SetRotation(m_Camera->GetRotation().x, m_Camera->GetRotation().y + y, m_Camera->GetRotation().z);
+}
+
+void GraphicsClass::ReadTest()
+{
+	ofstream file;
+	int* p;
+	p = binary->Read();
+	file.open("test.txt");
+	for (int i = 0; i < 10; i++)
+	{
+		file << std::to_string(*(p + i)) << endl;
+	}
+	file.close();
 }
