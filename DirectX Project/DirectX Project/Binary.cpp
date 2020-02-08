@@ -4,21 +4,33 @@ Binary::Binary(std::string file_name) : file_name(file_name){}
 
 Binary::~Binary(){}
 
-int* Binary::Read()
+void Binary::Initialize(int models)
 {
-	std::ifstream file;
-	file.open(file_name, std::ios::in | std::ios::binary);
-	static int test[10];
-	file.read((char*)&test, sizeof(test));
-	file.close();
-	return test;
+	num_models = models;
+	buffer = new Buffer[num_models];
 }
 
-void Binary::Write(int var[])
+void Binary::StoreBuffer(ID3D11Buffer* vb, ID3D11Buffer* ib, int ind)
 {
-	std::ofstream file;
-	file.open(file_name, std::ios::out | std::ios::binary);
-	int test[10]{10642, 18911, 288, 3, 47878, 50, 69, 72, 887, 616};
-	file.write((char*)&test, sizeof(test));
+	buffer[ind].vertex_buffer = vb;
+	buffer[ind].index_buffer = ib;
+}
+
+void Binary::Write()
+{
+	std::ofstream file(file_name, std::ios::out | std::ios::binary);
+	file.write((char*)&buffer, sizeof(buffer));
+	file.close();
+	//delete[] buffer;
+}
+
+void Binary::Read()
+{
+	//buffer = new Buffer[num_models];
+	std::ifstream file(file_name, std::ios::in | std::ios::binary);
+	file.read((char*)&buffer, sizeof(buffer));
 	file.close();
 }
+
+ID3D11Buffer* Binary::GetVBuffer(int ind) { return buffer[ind].vertex_buffer; }
+ID3D11Buffer* Binary::GetIBuffer(int ind) { return buffer[ind].index_buffer; }

@@ -61,18 +61,17 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Set the initial position of the camera.
 	m_Camera->SetPosition(25.0f, 50.0f, 25.0f);
 
-	binary = new Binary("chunk.bin");
-
 	// Dynamically set up 2D chunk array
 	chunk = new Chunk*[chunks_x];
 	for (int i = 0; i < chunks_x; ++i)
 		chunk[i] = new Chunk[chunks_y];
-
+	int chunk_num = 0;
 	for (int i = 0; i < chunks_x; ++i)
 	{
 		for (int j = 0; j < chunks_y; ++j)
 		{
-			result = chunk[i][j].Initialize(m_D3D->GetDevice(), i, j);
+			result = chunk[i][j].Initialize(m_D3D->GetDevice(), i, j, chunk_num);
+			chunk_num++;
 			if (!result)
 			{
 				MessageBox(hwnd, "Could not initialize chunk", "Error", MB_OK);
@@ -219,6 +218,27 @@ bool GraphicsClass::Update(int mouse_x, int mouse_y)
 
 	player->Update(D3DXVECTOR3(m_Camera->GetPosition().x, 0, m_Camera->GetPosition().z));
 
+	for (int i = 0; i < chunks_x; ++i)
+	{
+		for (int j = 0; j < chunks_y; ++j)
+		{
+			if (chunk[i][j].CheckRange(player->Position()))
+			{
+				if (!chunk[i][j].Loaded())
+				{
+					chunk[i][j].LoadBuffers();
+				}
+			}
+			else
+			{
+				if (chunk[i][j].Loaded())
+				{
+					chunk[i][j].Shutdown();
+				}
+			}
+		}
+	}
+
 	// Call the render function each frame
 	result = Render(rotation);
 	if (!result)
@@ -258,7 +278,7 @@ bool GraphicsClass::Render(float rotation)
 	{
 		for (int j = 0; j < chunks_y; ++j)
 		{
-			if (chunk[i][j].CheckRange(player->Position()))
+			if (chunk[i][j].Loaded())
 			{
 				chunk[i][j].Render(m_D3D->GetDeviceContext(), m_LightShader, m_Light, viewMatrix, projectionMatrix);
 			}
@@ -317,17 +337,4 @@ void GraphicsClass::CamRotY(float x)
 void GraphicsClass::CamRotX(float y)
 {
 	m_Camera->SetRotation(m_Camera->GetRotation().x, m_Camera->GetRotation().y + y, m_Camera->GetRotation().z);
-}
-
-void GraphicsClass::ReadTest()
-{
-	ofstream file;
-	int* p;
-	p = binary->Read();
-	file.open("test.txt");
-	for (int i = 0; i < 10; i++)
-	{
-		file << std::to_string(*(p + i)) << endl;
-	}
-	file.close();
 }

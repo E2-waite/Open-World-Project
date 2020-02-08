@@ -10,16 +10,31 @@ Chunk::~Chunk()
 
 }
 
-bool Chunk::Initialize(ID3D11Device* device, int x, int y)
+bool Chunk::Initialize(ID3D11Device* device, int x, int y, int num)
 {
 	pos[0] = x, pos[1] = y;
 	floor = new Model;
 	floor->Initialize(device, "Data/Floor.txt", "Data/Floor.dds", D3DXVECTOR3(0, 0, 0), 
 		D3DXVECTOR3(pos[0] * chunk_size, -0.5, pos[1] * chunk_size), D3DXVECTOR3(chunk_size, chunk_size, chunk_size));
-
+	num_objects++;
 	bool result = true;
 	result = SetupNPCs(device);
 	if (!result) return false;
+	string file_name = "Data/Chunks/chunk" + to_string(num) + ".bin";
+	binary = new Binary(file_name);
+	binary->Initialize(num_objects);
+	loaded = true;
+}
+
+void Chunk::Shutdown()
+{
+	loaded = false;
+	SaveBuffers();
+	floor->ShutdownBuffers();
+	for (int i = 0; i < num_npcs; i++)
+	{
+		npc[i].ShutdownBuffers();
+	}
 }
 
 bool Chunk::SetupNPCs(ID3D11Device* device)
@@ -37,6 +52,7 @@ bool Chunk::SetupNPCs(ID3D11Device* device)
 		result = npc[i].Initialize(device, "Data/Cube.txt", "Data/npc.dds", pos[0] * chunk_size, pos[1] * chunk_size, chunk_size);
 		if (!result) return false;
 		x_pos += 3;
+		num_objects++;
 	}
 }
 
@@ -75,3 +91,31 @@ bool Chunk::CheckRange(D3DXVECTOR3 player_pos)
 	if (sqrt(pow(player_pos.x - btm_right.x, 2) + pow(player_pos.z - btm_right.z, 2)) < load_range) return true;
 	return false;
 }
+
+void Chunk::SaveBuffers()
+{
+	int pos = 0;
+	binary->StoreBuffer(floor->GetVBuffer(), floor->GetIBuffer(), pos);
+	pos++;
+	for (int i = 0; i < num_npcs; i++)
+	{
+		binary->StoreBuffer(npc[i].GetVBuffer(), npc[i].GetIBuffer(), pos);
+		pos++;
+	}
+	binary->Write();
+}
+
+void Chunk::LoadBuffers()
+{
+	binary->Read();
+	int pos = 0;
+	floor->LoadBuffers(binary->GetVBuffer(pos), binary->GetIBuffer(pos));
+	pos++;
+	for (int i = 0; i < num_npcs; i++)
+	{
+		npc[i].LoadBuffers(binary->GetVBuffer(pos), binary->GetIBuffer(pos));
+	}
+	loaded = true;
+}
+
+bool Chunk::Loaded() { return loaded; }

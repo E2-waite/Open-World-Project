@@ -68,6 +68,6 @@ private:
 	LightClass* m_Light;
 	BitmapClass* m_Bitmap;
 	int chunks_x = 2, chunks_y = 2;
-	Binary* binary;
+
 };
 #endif

@@ -41,6 +41,7 @@ bool Model::Initialize(ID3D11Device* device, const char* modelFilename, const ch
 
 	// Initialize the vertex and index buffer that hold the geometry for the triangle.
 	result = InitializeBuffers(device);
+	
 	if (!result)
 	{
 		return false;
@@ -78,7 +79,10 @@ void Model::Render(ID3D11DeviceContext* deviceContext)
 {
 	UpdateMatrix();
 	// Put the vertex and index buffers on the graphics pipeline to prepare them for drawing.
-	RenderBuffers(deviceContext);
+	if (buffers_loaded)
+	{
+		RenderBuffers(deviceContext);
+	}
 
 	return;
 }
@@ -174,12 +178,22 @@ bool Model::InitializeBuffers(ID3D11Device* device)
 	/// After vertex and index buffers have been created, delete the vertex and index arrays as they are no longer needed.
 	// Release the arrays now that the vertex and index buffers have been created and loaded.
 
+	buffers_init = true;
+	buffers_loaded = true;
 	return true;
+}
+
+void Model::LoadBuffers(ID3D11Buffer* VBuffer, ID3D11Buffer* IBuffer)
+{
+	m_vertexBuffer = VBuffer;
+	m_indexBuffer = IBuffer;
+	buffers_loaded = true;
 }
 
 /// Releases vertex and index buffers that were created in the InitializeBuffers function
 void Model::ShutdownBuffers()
 {
+	buffers_loaded = false;
 	// Release the index buffer.
 	if (m_indexBuffer)
 	{
@@ -372,105 +386,6 @@ void Model::UpdateMatrix()
 	D3DXMatrixScaling(&scaleMatrix, scale.x, scale.y, scale.z);
 
 	m_worldMatrix = scaleMatrix * rotationMatrix * positionMatrix;
-}
-
-bool Model::WriteVector()
-{
-	ofstream output_file;
-	output_file.open("plant.obj", std::ios_base::app);
-	D3DXVECTOR4* positions;
-	D3DXVECTOR3* t_coord;
-
-	
-	positions = new D3DXVECTOR4[m_vertexCount];
-	t_coord = new D3DXVECTOR3[m_vertexCount];
-	for (int i = 0; i < m_vertexCount; i++)
-	{
-		D3DXVec3Transform(&positions[i], &vertices[i].position, &m_worldMatrix);
-	}
-
-	for (int i = 0; i < m_indexCount; i++)
-	{
-		output_file << "v ";
-		output_file << positions[indices[i]].x;
-		output_file << " ";
-		output_file << positions[indices[i]].y;
-		output_file << " ";
-		output_file << positions[indices[i]].z;
-		output_file << "\n";
-	}
-	output_file << "\n";
-	output_file.close();
-	return true;
-}
-bool Model::WriteTex()
-{
-	ofstream output_file;
-	output_file.open("plant.obj", std::ios_base::app);
-	D3DXVECTOR4* tv_positions;
-	tv_positions = new D3DXVECTOR4[m_vertexCount];
-	for (int i = 0; i < m_vertexCount; i++)
-	{
-		//D3DXVec2TransformCoord(&tv_positions[i], &vertices[i].texture, &m_worldMatrix);
-		D3DXVec2Transform(&tv_positions[i], &vertices[i].texture, &m_worldMatrix);
-	}
-
-	for (int i = 0; i < m_indexCount; i++)
-	{			
-		output_file << "vt ";
-		output_file << vertices[indices[i]].texture.x;
-		output_file << " ";
-		output_file << vertices[indices[i]].texture.y;
-		output_file << "\n";
-	}
-	return true;
-}
-bool Model::WriteNorm()
-{
-	ofstream output_file;
-	output_file.open("plant.obj", std::ios_base::app);
-	D3DXVECTOR3* n_positions;
-	n_positions = new D3DXVECTOR3[m_vertexCount];
-
-	for (int i = 0; i < m_vertexCount; i++)
-	{
-		D3DXVec3TransformNormal(&n_positions[i], &vertices[i].normal, &m_worldMatrix);
-	}
-
-	for (int i = 0; i < m_indexCount; i++)
-	{		
-		output_file << "vn ";
-		output_file << n_positions[indices[i]].x;
-		output_file << " ";
-		output_file << n_positions[indices[i]].y;
-		output_file << " ";
-		output_file << n_positions[indices[i]].z;
-		output_file << "\n";
-	}
-	return true;
-}
-
-int Model::WriteFaces(int offset)
-{
-	ofstream output_file;
-	output_file.open("plant.obj", std::ios_base::app);
-	int poly_ind = 1;
-	for (int i = 0; i < num_polygons; i++)
-	{
-		output_file << "f ";
-		for (int j = 0; j < 3; j++)
-		{
-			output_file << poly_ind + offset;
-			output_file << "/";
-			output_file << poly_ind + offset;
-			output_file << "/";
-			output_file << poly_ind + offset;
-			output_file << " ";
-			poly_ind++;
-		}
-		output_file << "\n";
-	}
-	return m_indexCount;
 }
 
 int Model::GetIndCount()

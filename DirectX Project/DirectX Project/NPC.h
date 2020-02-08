@@ -19,7 +19,7 @@ public:
 	NPC(const NPC&);
 	~NPC();
 	bool Initialize(ID3D11Device*, const char*, const char*, int, int, int);
-	void Shutdown();
+	void ShutdownBuffers();
 	void Render(ID3D11DeviceContext*);
 	void Frame();
 	void Move();
@@ -27,6 +27,9 @@ public:
 	D3DXMATRIX GetWorldMatrix();
 	ID3D11ShaderResourceView* GetTexture();
 	float GetHeight();
+	ID3D11Buffer* GetVBuffer();
+	ID3D11Buffer* GetIBuffer();
+	void LoadBuffers(ID3D11Buffer*, ID3D11Buffer*);
 private:
 	Model* model;
 	D3DXVECTOR3 start_pos;

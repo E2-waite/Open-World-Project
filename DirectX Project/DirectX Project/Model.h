@@ -52,15 +52,15 @@ public:
 	int GetIndexCount();
 	D3DXMATRIX GetWorldMatrix();
 	ID3D11ShaderResourceView* GetTexture();
-	bool WriteVector();
-	bool WriteTex();
-	bool WriteNorm();
-	int WriteFaces(int);
 	int GetIndCount();
 	float GetHeight();
+	ID3D11Buffer* GetVBuffer() { return m_vertexBuffer; };
+	ID3D11Buffer* GetIBuffer() { return m_indexBuffer; };
+	void LoadBuffers(ID3D11Buffer*, ID3D11Buffer*);
+	void ShutdownBuffers();
 private:
 	bool InitializeBuffers(ID3D11Device*);
-	void ShutdownBuffers();
+	bool LoadBuffers();
 	void RenderBuffers(ID3D11DeviceContext*);
 	bool LoadTexture(ID3D11Device*, const char*);
 	void ReleaseTexture();
@@ -82,6 +82,8 @@ private:
 	D3DXVECTOR3 scale;
 	int num_polygons;
 	float height = 0;
+	bool buffers_init = false;
+	bool buffers_loaded = false;
 };
 
 #endif

@@ -40,9 +40,14 @@ bool NPC::Initialize(ID3D11Device* device, const char* modelFilename, const char
 	return true;
 }
 
-void NPC::Shutdown()
+void NPC::LoadBuffers(ID3D11Buffer* VBuffer, ID3D11Buffer* IBuffer)
 {
+	model->LoadBuffers(VBuffer, IBuffer);
+}
 
+void NPC::ShutdownBuffers()
+{
+	model->ShutdownBuffers();
 }
 
 void NPC::Render(ID3D11DeviceContext* deviceContext)
@@ -93,4 +98,14 @@ ID3D11ShaderResourceView* NPC::GetTexture()
 float NPC::GetHeight()
 {
 	return model->GetHeight();
+}
+
+ID3D11Buffer* NPC::GetVBuffer()
+{
+	return model->GetVBuffer();
+}
+
+ID3D11Buffer* NPC::GetIBuffer()
+{
+	return model->GetIBuffer();
 }
