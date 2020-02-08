@@ -2,13 +2,16 @@
 #include <iostream>
 #include <fstream>
 #include <d3d11.h>
+#include <string>
 class Binary
 {
-	typedef struct BufferStruct
+private:
+	struct Buffer
 	{
 		ID3D11Buffer* vertex_buffer;
 		ID3D11Buffer* index_buffer;
-	}Buffer;
+		int numbers[10];
+	};
 
 public:
 	Binary(std::string);
