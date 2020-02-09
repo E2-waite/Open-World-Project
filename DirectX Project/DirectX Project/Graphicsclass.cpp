@@ -226,14 +226,14 @@ bool GraphicsClass::Update(int mouse_x, int mouse_y)
 			{
 				if (!chunk[i][j].Loaded())
 				{
-					chunk[i][j].LoadBuffers();
+					//chunk[i][j].LoadBuffers();
 				}
 			}
 			else
 			{
 				if (chunk[i][j].Loaded())
 				{
-					chunk[i][j].Shutdown();
+					//chunk[i][j].Shutdown();
 				}
 			}
 		}

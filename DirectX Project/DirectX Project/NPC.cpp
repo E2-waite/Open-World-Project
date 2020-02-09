@@ -40,16 +40,6 @@ bool NPC::Initialize(ID3D11Device* device, const char* modelFilename, const char
 	return true;
 }
 
-void NPC::LoadBuffers(ID3D11Buffer* VBuffer, ID3D11Buffer* IBuffer)
-{
-	model->LoadBuffers(VBuffer, IBuffer);
-}
-
-void NPC::ShutdownBuffers()
-{
-	model->ShutdownBuffers();
-}
-
 void NPC::Render(ID3D11DeviceContext* deviceContext)
 {
 	model->Render(deviceContext);
@@ -100,12 +90,10 @@ float NPC::GetHeight()
 	return model->GetHeight();
 }
 
-ID3D11Buffer* NPC::GetVBuffer()
-{
-	return model->GetVBuffer();
-}
+//VertexType* NPC::GetVertices() { return model->GetVertices(); }
 
-ID3D11Buffer* NPC::GetIBuffer()
-{
-	return model->GetIBuffer();
-}
+unsigned long* NPC::GetIndices() { return model->GetIndices(); }
+
+std::array<float, 3> NPC::GetPos(int ind) { return model->GetPos(ind); }
+std::array<float, 2> NPC::GetTex(int ind) { return model->GetTex(ind); }
+std::array<float, 3> NPC::GetNorm(int ind) { return model->GetNorm(ind); }

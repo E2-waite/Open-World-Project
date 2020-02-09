@@ -12,30 +12,18 @@
 #include <DirectXMath.h>
 #include <d3dx10math.h>
 #include <fstream>
+#include <array>
 using namespace std;
 #include "Textureclass.h"
+#include "Structs.h"
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: Model
 ////////////////////////////////////////////////////////////////////////////////
 class Model
 {
 private:
-	struct VertexType
-	{
-		D3DXVECTOR3 position;
-		D3DXVECTOR2 texture;
-		D3DXVECTOR3 normal;
-	};
 
-	struct ModelType
-	{
-		float x, y, z;
-		float tu, tv;
-		float nx, ny, nz;
-	};
 	int curr_index = 0;
-
-
 public:
 	Model();
 	Model(const Model&);
@@ -54,10 +42,13 @@ public:
 	ID3D11ShaderResourceView* GetTexture();
 	int GetIndCount();
 	float GetHeight();
-	ID3D11Buffer* GetVBuffer() { return m_vertexBuffer; };
-	ID3D11Buffer* GetIBuffer() { return m_indexBuffer; };
 	void LoadBuffers(ID3D11Buffer*, ID3D11Buffer*);
 	void ShutdownBuffers();
+	std::array<float, 3> GetPos(int);
+	std::array<float, 2> GetTex(int);
+	std::array<float, 3> GetNorm(int);
+	unsigned long* GetIndices() { return indices; }
+	void DeleteVertexData();
 private:
 	bool InitializeBuffers(ID3D11Device*);
 	bool LoadBuffers();
@@ -72,7 +63,6 @@ private:
 	TextureClass* m_Texture;
 	ModelType* m_model;
 	D3DXMATRIX m_worldMatrix;
-	VertexType* vertices;
 	unsigned long* indices;
 	float x_rot, y_rot, z_rot;
 	D3DXVECTOR3 start_rot;
@@ -84,6 +74,9 @@ private:
 	float height = 0;
 	bool buffers_init = false;
 	bool buffers_loaded = false;
+	std::array<float, 3>* v_pos;
+	std::array<float, 2>* v_tex;
+	std::array<float, 3>* v_norm;
 };
 
 #endif

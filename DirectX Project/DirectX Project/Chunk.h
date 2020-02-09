@@ -2,30 +2,30 @@
 
 #include <iostream>  
 #include <string>  
+#include "ObjectData.h"
 #include "Model.h"
 #include "NPC.h"
 #include "Lightshaderclass.h"
 #include "Lightclass.h"
-#include "Binary.h"
+#include "Consts.h"
 class Chunk
 {
 public:
 	Chunk();
 	~Chunk();
 	bool Initialize(ID3D11Device*, int, int, int);
+	void SetupObjects(ID3D11Device*, int, int);
+	void WriteBinaryData(int);
+	void ReadBinaryData(int);
 	void Shutdown();
 	void Update();
 	void Render(ID3D11DeviceContext*, LightShaderClass*, LightClass*, D3DXMATRIX, D3DXMATRIX);
-	bool SetupNPCs(ID3D11Device*);
 	bool CheckRange(D3DXVECTOR3);
-	void SaveBuffers();
-	void LoadBuffers();
 	bool Loaded();
-	bool Written();
 private:
 	Model* floor;
 	NPC* npc;
-	Binary* binary;
+	ObjectData* obj_data;
 	int num_npcs = 10;
 	int pos[2];
 	int chunk_size = 25;

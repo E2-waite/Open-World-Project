@@ -107,7 +107,7 @@ bool Model::InitializeBuffers(ID3D11Device* device)
 	HRESULT result;
 
 	// Create the vertex array.
-	vertices = new VertexType[m_vertexCount];
+	VertexType* vertices = new VertexType[m_vertexCount];
 	if (!vertices)
 	{
 		return false;
@@ -130,9 +130,9 @@ bool Model::InitializeBuffers(ID3D11Device* device)
 		vertices[i].position = D3DXVECTOR3(m_model[i].x, m_model[i].y, m_model[i].z);
 		vertices[i].texture = D3DXVECTOR2(m_model[i].tu, m_model[i].tv);
 		vertices[i].normal = D3DXVECTOR3(m_model[i].nx, m_model[i].ny, m_model[i].nz);
-
 		indices[i] = i;
 	}
+
 
 	/// Use vertex and index arrays to create vertex and index buffers.
 	// Set up the description of the static vertex buffer.
@@ -178,6 +178,7 @@ bool Model::InitializeBuffers(ID3D11Device* device)
 	/// After vertex and index buffers have been created, delete the vertex and index arrays as they are no longer needed.
 	// Release the arrays now that the vertex and index buffers have been created and loaded.
 
+	delete[]vertices;
 	buffers_init = true;
 	buffers_loaded = true;
 	return true;
@@ -185,9 +186,12 @@ bool Model::InitializeBuffers(ID3D11Device* device)
 
 void Model::LoadBuffers(ID3D11Buffer* VBuffer, ID3D11Buffer* IBuffer)
 {
-	m_vertexBuffer = VBuffer;
-	m_indexBuffer = IBuffer;
-	buffers_loaded = true;
+	if (VBuffer && IBuffer)
+	{
+		m_vertexBuffer = VBuffer;
+		m_indexBuffer = IBuffer;
+		buffers_loaded = true;
+	}
 }
 
 /// Releases vertex and index buffers that were created in the InitializeBuffers function
@@ -197,15 +201,15 @@ void Model::ShutdownBuffers()
 	// Release the index buffer.
 	if (m_indexBuffer)
 	{
-		m_indexBuffer->Release();
-		m_indexBuffer = 0;
+		//m_indexBuffer->Release();
+		//m_indexBuffer = 0;
 	}
 
 	// Release the vertex buffer.
 	if (m_vertexBuffer)
 	{
-		m_vertexBuffer->Release();
-		m_vertexBuffer = 0;
+		//m_vertexBuffer->Release();
+		//m_vertexBuffer = 0;
 	}
 	return;
 }
@@ -309,6 +313,9 @@ bool Model::LoadModel(const char* filename)
 	fin.get(input);
 	fin.get(input);
 
+	v_pos = new std::array<float, 3>[m_vertexCount];
+	v_tex = new std::array<float, 2>[m_vertexCount];
+	v_norm = new std::array<float, 3>[m_vertexCount];
 	// Read in vertex data and assign to m_model
 	for (int i = 0; i < m_vertexCount; i++)
 	{
@@ -396,4 +403,12 @@ int Model::GetIndCount()
 float Model::GetHeight()
 {
 	return height * scale.y;
+}
+
+std::array<float, 3> Model::GetPos(int ind) { return { (float)m_model[ind].x, (float)m_model[ind].y, (float)m_model[ind].z }; }
+std::array<float, 2> Model::GetTex(int ind) { return { (float)m_model[ind].tu, (float)m_model[ind].tv }; }
+std::array<float, 3> Model::GetNorm(int ind) { return { (float)m_model[ind].nx, (float)m_model[ind].ny, (float)m_model[ind].nz };}
+void Model::DeleteVertexData()
+{
+	delete[] m_model;
 }

@@ -27,9 +27,10 @@ public:
 	D3DXMATRIX GetWorldMatrix();
 	ID3D11ShaderResourceView* GetTexture();
 	float GetHeight();
-	ID3D11Buffer* GetVBuffer();
-	ID3D11Buffer* GetIBuffer();
-	void LoadBuffers(ID3D11Buffer*, ID3D11Buffer*);
+	unsigned long* GetIndices();
+	std::array<float, 3> GetPos(int);
+	std::array<float, 2> GetTex(int);
+	std::array<float, 3> GetNorm(int);
 private:
 	Model* model;
 	D3DXVECTOR3 start_pos;
