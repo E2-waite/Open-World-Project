@@ -23,7 +23,7 @@ Model::~Model()
 }
  
 /// The Initialize function will call the initialization functions for the vertex and index buffers. 
-bool Model::Initialize(ID3D11Device* device, const char* modelFilename, const char* textureFilename, D3DXVECTOR3 rot, D3DXVECTOR3 pos, D3DXVECTOR3 scl)
+std::ostream& Model::Initialize(ID3D11Device* device, const char* modelFilename, const char* textureFilename, D3DXVECTOR3 rot, D3DXVECTOR3 pos, D3DXVECTOR3 scl, std::ostream& os)
 {
 	bool result;
 
@@ -34,29 +34,37 @@ bool Model::Initialize(ID3D11Device* device, const char* modelFilename, const ch
 	scale = scl;
 	// Load in the model data.
 	result = LoadModel(modelFilename);
-	if (!result)
-	{
-		return false;
-	}
 
 	// Initialize the vertex and index buffer that hold the geometry for the triangle.
-	result = InitializeBuffers(device);
-	
-	if (!result)
-	{
-		return false;
-	}
+	InitializeBuffers(device, os);
 
 	// Load the texture for this model.
 	result = LoadTexture(device, textureFilename);
-	if (!result)
-	{
-		return false;
-	}
 
 	D3DXMatrixIdentity(&m_worldMatrix);
 
-	return true;
+	return os;
+}
+
+std::istream& Model::LoadBuffers(ID3D11Device* device, std::istream& is)
+{
+	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc ;
+	D3D11_SUBRESOURCE_DATA vertexData, indexData;
+
+	// Load vertex buffer data
+	binary = new Binary;
+	binary->DeserializeBuffer(is, vertexBufferDesc, vertexData);
+	delete binary;
+	device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
+
+	// Load index buffer data
+	binary = new Binary;
+	binary->DeserializeBuffer(is, indexBufferDesc, indexData);
+	delete binary;
+	device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
+
+	buffers_loaded = true;
+	return is;
 }
 
 void Model::Shutdown()
@@ -100,7 +108,7 @@ ID3D11ShaderResourceView* Model::GetTexture()
 
 /// This is where we handle creating the vertex and index buffers
 /// Usually you would read in a model and create the buffers from that data file.
-bool Model::InitializeBuffers(ID3D11Device* device)
+std::ostream& Model::InitializeBuffers(ID3D11Device* device, std::ostream& os)
 {
 	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
@@ -108,17 +116,11 @@ bool Model::InitializeBuffers(ID3D11Device* device)
 
 	// Create the vertex array.
 	VertexType* vertices = new VertexType[m_vertexCount];
-	if (!vertices)
-	{
-		return false;
-	}
+
 
 	// Create the index array.
 	indices = new unsigned long[m_indexCount];
-	if (!indices)
-	{
-		return false;
-	}
+
 
 	// Load the vertex array and index array with data.
 	for (int i = 0; i < m_vertexCount; i++)
@@ -150,10 +152,6 @@ bool Model::InitializeBuffers(ID3D11Device* device)
 
 	// Now create the vertex buffer.
 	result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
-	if (FAILED(result))
-	{
-		return false;
-	}
 
 	// Set up the description of the static index buffer.
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -168,48 +166,41 @@ bool Model::InitializeBuffers(ID3D11Device* device)
 	indexData.SysMemPitch = 0;
 	indexData.SysMemSlicePitch = 0;
 
-	// Create the index buffer.
 	result = device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
-	if (FAILED(result))
-	{
-		return false;
-	}
 
-	/// After vertex and index buffers have been created, delete the vertex and index arrays as they are no longer needed.
-	// Release the arrays now that the vertex and index buffers have been created and loaded.
+	binary = new Binary;
+	binary->SerializeBuffer(os, vertexBufferDesc, vertexData);
+	delete binary;
+
+	binary = new Binary;
+	binary->SerializeBuffer(os, indexBufferDesc, indexData);
+	delete binary;
 
 	delete[]vertices;
 	buffers_init = true;
 	buffers_loaded = true;
-	return true;
-}
-
-void Model::LoadBuffers(ID3D11Buffer* VBuffer, ID3D11Buffer* IBuffer)
-{
-	if (VBuffer && IBuffer)
-	{
-		m_vertexBuffer = VBuffer;
-		m_indexBuffer = IBuffer;
-		buffers_loaded = true;
-	}
+	return os;
 }
 
 /// Releases vertex and index buffers that were created in the InitializeBuffers function
 void Model::ShutdownBuffers()
 {
 	buffers_loaded = false;
+	
 	// Release the index buffer.
 	if (m_indexBuffer)
 	{
-		//m_indexBuffer->Release();
-		//m_indexBuffer = 0;
+		m_indexBuffer->Release();
+		m_indexBuffer = 0;
+		delete m_indexBuffer;
 	}
 
 	// Release the vertex buffer.
 	if (m_vertexBuffer)
 	{
-		//m_vertexBuffer->Release();
-		//m_vertexBuffer = 0;
+		m_vertexBuffer->Release();
+		m_vertexBuffer = 0;
+		delete m_vertexBuffer;
 	}
 	return;
 }

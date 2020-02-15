@@ -80,13 +80,10 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		}
 	}
 	
+	std::ofstream bin_file("Data / Chunks / PlayerData.bin", std::ofstream::trunc | std::ios::binary);
 	player = new Player;
-	result = player->Initialize(m_D3D->GetDevice());
-	if (!result)
-	{
-		MessageBox(hwnd, "Could not initialize player", "Error", MB_OK);
-		return false;
-	}
+	player->Initialize(m_D3D->GetDevice(), bin_file);
+	bin_file.close();
 
 	// Create the light shader object.
 	m_TextureShader = new TextureShaderClass;
@@ -149,7 +146,27 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	return true;
 }
 
+void GraphicsClass::ShutdownChunks()
+{
+	for (int i = 0; i < chunks_x; i++)
+	{
+		for (int j = 0; j < chunks_y; j++)
+		{
+			chunk[i, j]->DeleteChunk();
+		}
+	}
+}
 
+void GraphicsClass::LoadChunks()
+{
+	for (int i = 0; i < chunks_x; ++i)
+	{
+		for (int j = 0; j < chunks_y; ++j)
+		{
+			chunk[i, j]->LoadChunk(m_D3D->GetDevice());
+		}
+	}
+}
 
 void GraphicsClass::Shutdown()
 {
@@ -226,14 +243,14 @@ bool GraphicsClass::Update(int mouse_x, int mouse_y)
 			{
 				if (!chunk[i][j].Loaded())
 				{
-					//chunk[i][j].LoadBuffers();
+					chunk[i][j].LoadChunk(m_D3D->GetDevice());
 				}
 			}
 			else
 			{
 				if (chunk[i][j].Loaded())
 				{
-					//chunk[i][j].Shutdown();
+					chunk[i][j].DeleteChunk();
 				}
 			}
 		}

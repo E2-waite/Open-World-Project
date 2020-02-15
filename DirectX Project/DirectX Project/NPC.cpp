@@ -15,20 +15,16 @@ NPC::~NPC()
 
 }
 
-bool NPC::Initialize(ID3D11Device* device, const char* modelFilename, const char* textureFilename, int x, int y, int size)
+std::ostream& NPC::Initialize(ID3D11Device* device, const char* modelFilename, const char* textureFilename, int x, int y, int size, std::ostream& os)
 {
 	x_offset = x, y_offset = y, chunk_size = size;
 	model = new Model;
-	if (!model)
-	{
-		return false;
-	}
 
 	// Initialize model in random location within current chunk
 	float rand_x = rand() % chunk_size + 0;
 	float rand_y = rand() % chunk_size + 0;
 	start_pos = D3DXVECTOR3(rand_x + x_offset, 0, rand_y + y_offset);
-	model->Initialize(device, modelFilename, textureFilename, D3DXVECTOR3(0, 0, 0), start_pos, D3DXVECTOR3(1, 1, 1));
+	model->Initialize(device, modelFilename, textureFilename, D3DXVECTOR3(0, 0, 0), start_pos, D3DXVECTOR3(1, 1, 1), os);
 
 	// Find random movement target within current chunk
 	rand_x = rand() % chunk_size + 0;
@@ -37,7 +33,7 @@ bool NPC::Initialize(ID3D11Device* device, const char* modelFilename, const char
 	float distance = sqrt(pow(target_pos.x - start_pos.x, 2) + pow(target_pos.z - start_pos.z, 2));
 	direction = D3DXVECTOR3((target_pos.x - start_pos.x) / distance, 0, (target_pos.z - start_pos.z) / distance);
 	moving = true;
-	return true;
+	return os;
 }
 
 void NPC::Render(ID3D11DeviceContext* deviceContext)

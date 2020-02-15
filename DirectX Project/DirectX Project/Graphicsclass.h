@@ -45,6 +45,8 @@ public:
 	GraphicsClass();
 	GraphicsClass(const GraphicsClass&);
 	~GraphicsClass();
+	void ShutdownChunks();
+	void LoadChunks();
 	bool Initialize(int, int, HWND);
 	void Shutdown();
 	bool Update(int,int);
@@ -54,7 +56,6 @@ public:
 	void CamPosZ(float);
 	void CamRotX(float);
 	void CamRotY(float);
-	void ReadTest();
 private:
 	bool Render(float);
 

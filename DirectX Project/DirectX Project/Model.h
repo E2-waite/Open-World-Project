@@ -16,6 +16,7 @@
 using namespace std;
 #include "Textureclass.h"
 #include "Structs.h"
+#include "Binary.h"
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: Model
 ////////////////////////////////////////////////////////////////////////////////
@@ -28,7 +29,8 @@ public:
 	Model();
 	Model(const Model&);
 	~Model();
-	bool Initialize(ID3D11Device*, const char*, const char*, D3DXVECTOR3 rot, D3DXVECTOR3 pos, D3DXVECTOR3 scl);
+	std::ostream& Initialize(ID3D11Device*, const char*, const char*, D3DXVECTOR3 rot, D3DXVECTOR3 pos, D3DXVECTOR3 scl, std::ostream&);
+	std::istream& LoadBuffers(ID3D11Device* device, std::istream&);
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
 	bool SetPos(float, float, float);
@@ -50,8 +52,7 @@ public:
 	unsigned long* GetIndices() { return indices; }
 	void DeleteVertexData();
 private:
-	bool InitializeBuffers(ID3D11Device*);
-	bool LoadBuffers();
+	std::ostream& InitializeBuffers(ID3D11Device*, std::ostream&);
 	void RenderBuffers(ID3D11DeviceContext*);
 	bool LoadTexture(ID3D11Device*, const char*);
 	void ReleaseTexture();
@@ -77,6 +78,7 @@ private:
 	std::array<float, 3>* v_pos;
 	std::array<float, 2>* v_tex;
 	std::array<float, 3>* v_norm;
+	Binary* binary;
 };
 
 #endif

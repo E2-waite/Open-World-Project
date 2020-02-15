@@ -146,11 +146,11 @@ bool SystemClass::Frame()
 
 	if (m_Input->CheckKey(DIK_1))
 	{
-		//m_Graphics->ReadTest();
+		m_Graphics->ShutdownChunks();
 	}
 	if (m_Input->CheckKey(DIK_2))
 	{
-		//m_Graphics->Write1();
+		m_Graphics->LoadChunks();
 	}
 	if (m_Input->CheckKey(DIK_3))
 	{
