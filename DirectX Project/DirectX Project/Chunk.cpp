@@ -46,25 +46,22 @@ void Chunk::DeleteChunk()
 {
 	loaded = false;
 	floor->ShutdownBuffers();
+	for (int i = 0; i < num_npcs; i++)
+	{
+		npc[i].ShutdownBuffers();
+	}
 }
 
 void Chunk::LoadChunk(ID3D11Device* device)
 {
 	std::ifstream bin_file(file_name, std::ios::binary);
 	floor->LoadBuffers(device, bin_file);
+	for (int i = 0; i < num_npcs; i++)
+	{
+		npc[i].LoadBuffers(device, bin_file);
+	}
 	bin_file.close();
 	loaded = true;
-}
-
-void Chunk::Shutdown()
-{
-	loaded = false;
-	//SaveBuffers();
-	//floor->ShutdownBuffers();
-	//for (int i = 0; i < num_npcs; i++)
-	//{
-	//	npc[i].ShutdownBuffers();
-	//}
 }
 
 void Chunk::Update()
@@ -77,15 +74,18 @@ void Chunk::Update()
 
 void Chunk::Render(ID3D11DeviceContext* deviceContext, LightShaderClass* light_shader, LightClass* light, D3DXMATRIX view_matrix, D3DXMATRIX projection_matrix)
 {
-	floor->Render(deviceContext);
-	light_shader->Render(deviceContext, floor->GetIndexCount(), floor->GetWorldMatrix(), view_matrix,
-		projection_matrix, floor->GetTexture(), light->GetDirection(), light->GetAmbientColour(), light->GetDiffuseColour());
-
-	for (int i = 0; i < num_npcs; i++)
+	if (loaded)
 	{
-		npc[i].Render(deviceContext);
-		light_shader->Render(deviceContext, npc[i].GetIndexCount(), npc[i].GetWorldMatrix(), view_matrix,
-			projection_matrix, npc[i].GetTexture(), light->GetDirection(), light->GetAmbientColour(), light->GetDiffuseColour());
+		floor->Render(deviceContext);
+		light_shader->Render(deviceContext, floor->GetIndexCount(), floor->GetWorldMatrix(), view_matrix,
+			projection_matrix, floor->GetTexture(), light->GetDirection(), light->GetAmbientColour(), light->GetDiffuseColour());
+
+		for (int i = 0; i < num_npcs; i++)
+		{
+			npc[i].Render(deviceContext);
+			light_shader->Render(deviceContext, npc[i].GetIndexCount(), npc[i].GetWorldMatrix(), view_matrix,
+				projection_matrix, npc[i].GetTexture(), light->GetDirection(), light->GetAmbientColour(), light->GetDiffuseColour());
+		}
 	}
 }
 

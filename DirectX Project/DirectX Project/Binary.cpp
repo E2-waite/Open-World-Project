@@ -4,63 +4,33 @@ Binary::Binary(){}
 
 Binary::~Binary(){}
 
-std::ostream& Binary::SerializeBuffer(std::ostream& os, D3D11_BUFFER_DESC b_desc, D3D11_SUBRESOURCE_DATA b_data)
+std::ostream& Binary::Serialize(std::ostream& os, ID3D11Buffer* v_buffer, ID3D11Buffer* i_buffer)
 {
-	buffer_desc.push_back(b_desc);
-	buffer_data.push_back(b_data);
-	SerializeDesc(os, buffer_desc);
-	SerializeData(os, buffer_data);
-	return os;
-}
-
-std::ostream& Binary::SerializeDesc(std::ostream& os, std::vector<D3D11_BUFFER_DESC> v)
-{
-	auto size = v.size();
-	// Writes the size of the vector to binary
+	// Create vector for storing buffer data (Vectors can be resized to the required size, preventing 'stack-based buffer overrun')
+	std::vector<BufferData> buffers;
+	// Initialize buffer data class and store buffer data within it.
+	BufferData data;
+	data.StoreBuffers(v_buffer, i_buffer);
+	// Push back buffer data into vector, then write the size of the vector to the binary file. 
+	// (this allows the resizing of the vector to correct size when reading)
+	buffers.push_back(data);
+	auto size = buffers.size();
 	os.write(reinterpret_cast<char const*>(&size), sizeof(size));
-	// Writes the data
-	os.write(reinterpret_cast<char const*>(v.data()), v.size() * sizeof(D3D11_BUFFER_DESC));
+	// Then writes vector data to the binary file.
+	os.write(reinterpret_cast<char const*>(buffers.data()), buffers.size() * sizeof(BufferData));
 	return os;
 }
 
-std::ostream& Binary::SerializeData(std::ostream& os, std::vector<D3D11_SUBRESOURCE_DATA> v)
+std::istream& Binary::Deserialize(std::istream& is, ID3D11Buffer*& v_buffer, ID3D11Buffer*& i_buffer)
 {
-	auto size = v.size();
-	// Writes the size of the vector to binary
-	os.write(reinterpret_cast<char const*>(&size), sizeof(size));
-	// Writes the data
-	os.write(reinterpret_cast<char const*>(v.data()), v.size() * sizeof(D3D11_SUBRESOURCE_DATA));
-	return os;
-}
-
-std::istream& Binary::DeserializeBuffer(std::istream& is, D3D11_BUFFER_DESC& b_desc, D3D11_SUBRESOURCE_DATA& b_data)
-{
-	DeserializeDesc(is, buffer_desc);
-	DeserializeData(is, buffer_data);
-	b_desc = buffer_desc[0];
-	b_data = buffer_data[0];
-	return is;
-}
-
-std::istream& Binary::DeserializeDesc(std::istream& is, std::vector<D3D11_BUFFER_DESC>& v)
-{
-	decltype(v.size()) size;
-	// Reads the size of the upcoming data, then resizes the vector to fit the data
+	// Create a vector for reading buffer data into.
+	std::vector<BufferData> buffers;
+	decltype(buffers.size()) size;
+	// Read the required size of the vector from the binary file, then resize the vector to the correct size.
 	is.read(reinterpret_cast<char*>(&size), sizeof(size));
-	v.resize(size);
-	// Reads data into vector
-	is.read(reinterpret_cast<char*>(v.data()), v.size() * sizeof(D3D11_BUFFER_DESC));
-
-	return is;
-}
-
-std::istream& Binary::DeserializeData(std::istream& is, std::vector<D3D11_SUBRESOURCE_DATA>& v)
-{
-	decltype(v.size()) size;
-	// Reads the size of the upcoming data, then resizes the vector to fit the data
-	is.read(reinterpret_cast<char*>(&size), sizeof(size));
-	v.resize(size);
-	// Reads data into vector
-	is.read(reinterpret_cast<char*>(v.data()), v.size() * sizeof(D3D11_SUBRESOURCE_DATA));
+	buffers.resize(size);
+	// Read BufferData vector from the binary file, then load load buffers from BufferData class.
+	is.read(reinterpret_cast<char*>(buffers.data()), buffers.size() * sizeof(BufferData));
+	buffers[0].LoadBuffers(v_buffer, i_buffer);
 	return is;
 }

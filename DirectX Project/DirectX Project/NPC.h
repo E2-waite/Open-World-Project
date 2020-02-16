@@ -19,6 +19,7 @@ public:
 	NPC(const NPC&);
 	~NPC();
 	std::ostream& Initialize(ID3D11Device*, const char*, const char*, int, int, int, std::ostream&);
+	std::istream& LoadBuffers(ID3D11Device*, std::istream&);
 	void ShutdownBuffers();
 	void Render(ID3D11DeviceContext*);
 	void Frame();

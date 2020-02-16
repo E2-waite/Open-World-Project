@@ -46,27 +46,6 @@ std::ostream& Model::Initialize(ID3D11Device* device, const char* modelFilename,
 	return os;
 }
 
-std::istream& Model::LoadBuffers(ID3D11Device* device, std::istream& is)
-{
-	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc ;
-	D3D11_SUBRESOURCE_DATA vertexData, indexData;
-
-	// Load vertex buffer data
-	binary = new Binary;
-	binary->DeserializeBuffer(is, vertexBufferDesc, vertexData);
-	delete binary;
-	device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
-
-	// Load index buffer data
-	binary = new Binary;
-	binary->DeserializeBuffer(is, indexBufferDesc, indexData);
-	delete binary;
-	device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
-
-	buffers_loaded = true;
-	return is;
-}
-
 void Model::Shutdown()
 {
 	//Release the model texture.
@@ -169,11 +148,7 @@ std::ostream& Model::InitializeBuffers(ID3D11Device* device, std::ostream& os)
 	result = device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
 
 	binary = new Binary;
-	binary->SerializeBuffer(os, vertexBufferDesc, vertexData);
-	delete binary;
-
-	binary = new Binary;
-	binary->SerializeBuffer(os, indexBufferDesc, indexData);
+	binary->Serialize(os, m_vertexBuffer,  m_indexBuffer);
 	delete binary;
 
 	delete[]vertices;
@@ -182,17 +157,23 @@ std::ostream& Model::InitializeBuffers(ID3D11Device* device, std::ostream& os)
 	return os;
 }
 
-/// Releases vertex and index buffers that were created in the InitializeBuffers function
+std::istream& Model::LoadBuffers(ID3D11Device* device, std::istream& is)
+{
+	binary = new Binary;
+	binary->Deserialize(is, m_vertexBuffer, m_indexBuffer);
+	delete binary;
+	buffers_loaded = true;
+	return is;
+}
+
 void Model::ShutdownBuffers()
 {
 	buffers_loaded = false;
-	
 	// Release the index buffer.
 	if (m_indexBuffer)
 	{
 		m_indexBuffer->Release();
 		m_indexBuffer = 0;
-		delete m_indexBuffer;
 	}
 
 	// Release the vertex buffer.
@@ -200,7 +181,6 @@ void Model::ShutdownBuffers()
 	{
 		m_vertexBuffer->Release();
 		m_vertexBuffer = 0;
-		delete m_vertexBuffer;
 	}
 	return;
 }

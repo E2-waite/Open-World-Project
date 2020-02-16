@@ -15,6 +15,13 @@ NPC::~NPC()
 
 }
 
+std::istream& NPC::LoadBuffers(ID3D11Device* device, std::istream& is) 
+{ 
+	model->LoadBuffers(device, is); 
+	return is;
+}
+void NPC::ShutdownBuffers() { model->ShutdownBuffers(); }
+
 std::ostream& NPC::Initialize(ID3D11Device* device, const char* modelFilename, const char* textureFilename, int x, int y, int size, std::ostream& os)
 {
 	x_offset = x, y_offset = y, chunk_size = size;
