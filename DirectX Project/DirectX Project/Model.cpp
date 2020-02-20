@@ -162,20 +162,20 @@ std::istream& Model::LoadBuffers(ID3D11Device* device, std::istream& is)
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 	BufferData buffers;
 	buffers.Read(is, vertexBufferDesc, indexBufferDesc, vertexData, indexData);
-	//device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
-	//device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
+	device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
+	device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
 	buffers_loaded = true;
 	return is;
 }
 
 void Model::ShutdownBuffers()
 {
-	buffers_loaded = false;
 	// Release the index buffer.
 	if (m_indexBuffer)
 	{
 		m_indexBuffer->Release();
 		m_indexBuffer = 0;
+		delete m_indexBuffer;
 	}
 
 	// Release the vertex buffer.
@@ -183,6 +183,7 @@ void Model::ShutdownBuffers()
 	{
 		m_vertexBuffer->Release();
 		m_vertexBuffer = 0;
+		delete m_vertexBuffer;
 	}
 	return;
 }
