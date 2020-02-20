@@ -92,11 +92,3 @@ float NPC::GetHeight()
 {
 	return model->GetHeight();
 }
-
-//VertexType* NPC::GetVertices() { return model->GetVertices(); }
-
-unsigned long* NPC::GetIndices() { return model->GetIndices(); }
-
-std::array<float, 3> NPC::GetPos(int ind) { return model->GetPos(ind); }
-std::array<float, 2> NPC::GetTex(int ind) { return model->GetTex(ind); }
-std::array<float, 3> NPC::GetNorm(int ind) { return model->GetNorm(ind); }

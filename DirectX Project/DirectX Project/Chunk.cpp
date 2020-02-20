@@ -13,7 +13,7 @@ Chunk::~Chunk()
 bool Chunk::Initialize(ID3D11Device* device, int x, int y, int num)
 {
 	file_name = "Data/Chunks/chunk" + to_string(num) + ".bin";
-	std::ofstream bin_file(file_name, std::ofstream::trunc | std::ios::binary);
+	std::ofstream bin_file(file_name, std::ios::trunc | std::ios::binary);
 	SetupObjects(device, x, y, bin_file);
 	bin_file.close();
 	loaded = true;

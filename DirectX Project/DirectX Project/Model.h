@@ -17,6 +17,7 @@ using namespace std;
 #include "Textureclass.h"
 #include "Structs.h"
 #include "Binary.h"
+#include "BufferData.h"
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: Model
 ////////////////////////////////////////////////////////////////////////////////
@@ -44,12 +45,10 @@ public:
 	ID3D11ShaderResourceView* GetTexture();
 	int GetIndCount();
 	float GetHeight();
-	void LoadBuffers(ID3D11Buffer*, ID3D11Buffer*);
 	void ShutdownBuffers();
 	std::array<float, 3> GetPos(int);
 	std::array<float, 2> GetTex(int);
 	std::array<float, 3> GetNorm(int);
-	unsigned long* GetIndices() { return indices; }
 	void DeleteVertexData();
 private:
 	std::ostream& InitializeBuffers(ID3D11Device*, std::ostream&);
@@ -58,13 +57,13 @@ private:
 	void ReleaseTexture();
 	bool LoadModel(const char*);
 	void ReleaseModel();
+	void SetupBuffers(ID3D11Device*, VertexType*, unsigned long*);
 private:
 	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
 	int m_vertexCount, m_indexCount;
 	TextureClass* m_Texture;
 	ModelType* m_model;
 	D3DXMATRIX m_worldMatrix;
-	unsigned long* indices;
 	float x_rot, y_rot, z_rot;
 	D3DXVECTOR3 start_rot;
 	D3DXVECTOR3 rotation;
@@ -78,7 +77,7 @@ private:
 	std::array<float, 3>* v_pos;
 	std::array<float, 2>* v_tex;
 	std::array<float, 3>* v_norm;
-	Binary* binary;
+	//Binary* binary;
 };
 
 #endif

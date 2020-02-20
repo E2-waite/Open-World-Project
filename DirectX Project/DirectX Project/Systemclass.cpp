@@ -146,7 +146,7 @@ bool SystemClass::Frame()
 
 	if (m_Input->CheckKey(DIK_1))
 	{
-		//m_Graphics->ShutdownChunks();
+
 	}
 	if (m_Input->CheckKey(DIK_2))
 	{

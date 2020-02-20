@@ -1,17 +1,18 @@
 #pragma once
-#define _CRT_SECURE_NO_WARNINGS
-#include <d3d11.h>
-#include <algorithm>
-#include <vector>
+#include <fstream>
+#include "Structs.h"
 class BufferData
 {
 public:
+	BufferData(int, int, VertexType*, unsigned long*);
 	BufferData();
 	~BufferData();
-	virtual void StoreBuffers(ID3D11Buffer*, ID3D11Buffer*);
-	virtual void LoadBuffers(ID3D11Buffer*&, ID3D11Buffer*&);
-private:
-	char* v_data;
-	char* i_data;
-};
+	std::ostream& Write(std::ostream&);
+	std::istream& Read(std::istream&, int&, int&, VertexType*&, unsigned long*&);
 
+private:
+	int v_count = 0;
+	int i_count = 0;
+	VertexType* vertices;
+	unsigned long* indices;
+};

@@ -7,6 +7,7 @@
 #include "Lightshaderclass.h"
 #include "Lightclass.h"
 #include "Consts.h"
+#include "Binary.h"
 class Chunk
 {
 public:

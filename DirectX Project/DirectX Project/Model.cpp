@@ -89,16 +89,13 @@ ID3D11ShaderResourceView* Model::GetTexture()
 /// Usually you would read in a model and create the buffers from that data file.
 std::ostream& Model::InitializeBuffers(ID3D11Device* device, std::ostream& os)
 {
-	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
-	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 	HRESULT result;
 
 	// Create the vertex array.
 	VertexType* vertices = new VertexType[m_vertexCount];
 
-
 	// Create the index array.
-	indices = new unsigned long[m_indexCount];
+	unsigned long* indices = new unsigned long[m_indexCount];
 
 
 	// Load the vertex array and index array with data.
@@ -114,6 +111,23 @@ std::ostream& Model::InitializeBuffers(ID3D11Device* device, std::ostream& os)
 		indices[i] = i;
 	}
 
+	SetupBuffers(device, vertices, indices);
+
+
+	BufferData buffers(m_vertexCount, m_indexCount, vertices, indices);
+	buffers.Write(os);
+
+	delete[]vertices;
+	delete[]indices;
+	buffers_init = true;
+	buffers_loaded = true;
+	return os;
+}
+
+void Model::SetupBuffers(ID3D11Device* device, VertexType* vertices, unsigned long* indices)
+{
+	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
+	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 
 	/// Use vertex and index arrays to create vertex and index buffers.
 	// Set up the description of the static vertex buffer.
@@ -130,7 +144,7 @@ std::ostream& Model::InitializeBuffers(ID3D11Device* device, std::ostream& os)
 	vertexData.SysMemSlicePitch = 0;
 
 	// Now create the vertex buffer.
-	result = device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
+	device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
 
 	// Set up the description of the static index buffer.
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -145,24 +159,19 @@ std::ostream& Model::InitializeBuffers(ID3D11Device* device, std::ostream& os)
 	indexData.SysMemPitch = 0;
 	indexData.SysMemSlicePitch = 0;
 
-	result = device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
-
-	binary = new Binary;
-	binary->Serialize(os, m_vertexBuffer,  m_indexBuffer);
-	delete binary;
-
-	delete[]vertices;
-	buffers_init = true;
-	buffers_loaded = true;
-	return os;
+	device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
 }
 
 std::istream& Model::LoadBuffers(ID3D11Device* device, std::istream& is)
 {
-	binary = new Binary;
-	binary->Deserialize(is, m_vertexBuffer, m_indexBuffer);
-	delete binary;
+	VertexType* vertices;
+	unsigned long* indices;
+	BufferData buffers;
+	buffers.Read(is, m_vertexCount, m_indexCount, vertices, indices);
+	SetupBuffers(device, vertices, indices);
 	buffers_loaded = true;
+	delete[] vertices;
+	delete[] indices;
 	return is;
 }
 
