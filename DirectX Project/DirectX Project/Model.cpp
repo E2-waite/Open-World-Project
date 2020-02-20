@@ -111,21 +111,6 @@ std::ostream& Model::InitializeBuffers(ID3D11Device* device, std::ostream& os)
 		indices[i] = i;
 	}
 
-	SetupBuffers(device, vertices, indices);
-
-
-	BufferData buffers(m_vertexCount, m_indexCount, vertices, indices);
-	buffers.Write(os);
-
-	delete[]vertices;
-	delete[]indices;
-	buffers_init = true;
-	buffers_loaded = true;
-	return os;
-}
-
-void Model::SetupBuffers(ID3D11Device* device, VertexType* vertices, unsigned long* indices)
-{
 	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
 	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 
@@ -160,18 +145,26 @@ void Model::SetupBuffers(ID3D11Device* device, VertexType* vertices, unsigned lo
 	indexData.SysMemSlicePitch = 0;
 
 	device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
+
+	BufferData buffers(vertexBufferDesc, indexBufferDesc, vertexData, indexData);
+	buffers.Write(os);
+
+	delete[]vertices;
+	delete[]indices;
+	buffers_init = true;
+	buffers_loaded = true;
+	return os;
 }
 
 std::istream& Model::LoadBuffers(ID3D11Device* device, std::istream& is)
 {
-	VertexType* vertices;
-	unsigned long* indices;
+	D3D11_BUFFER_DESC vertexBufferDesc, indexBufferDesc;
+	D3D11_SUBRESOURCE_DATA vertexData, indexData;
 	BufferData buffers;
-	buffers.Read(is, m_vertexCount, m_indexCount, vertices, indices);
-	SetupBuffers(device, vertices, indices);
+	buffers.Read(is, vertexBufferDesc, indexBufferDesc, vertexData, indexData);
+	//device->CreateBuffer(&vertexBufferDesc, &vertexData, &m_vertexBuffer);
+	//device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
 	buffers_loaded = true;
-	delete[] vertices;
-	delete[] indices;
 	return is;
 }
 

@@ -1,36 +1,47 @@
 #include "BufferData.h"
 
 
-BufferData::BufferData(int v_count, int i_count, VertexType* vertices, unsigned long* indices) 
-					: v_count(v_count), i_count(i_count), vertices(vertices), indices(indices) {}
+BufferData::BufferData(D3D11_BUFFER_DESC vertex_desc, D3D11_BUFFER_DESC index_desc, D3D11_SUBRESOURCE_DATA vertex_data, D3D11_SUBRESOURCE_DATA index_data)
+					: vertex_desc(vertex_desc), index_desc(index_desc), vertex_data(vertex_data), index_data(index_data) {}
 
-BufferData::BufferData() 
-{
-	v_count = 0;
-	i_count = 0;
-}
+BufferData::BufferData() {}
 BufferData::~BufferData() {}
 std::ostream& BufferData::Write(std::ostream& os)
 {
-	// Write vertices
-	os.write((char*)&v_count, sizeof(int));
-	os.write((char*)&vertices, sizeof(VertexType) * v_count);
+	size_t size;
+	size = sizeof(vertex_desc);
+	os.write((char*)&size, sizeof(size_t));
+	os.write((char*)&vertex_desc, sizeof(D3D11_BUFFER_DESC));
 
-	// Write number of indices
-	os.write((char*)&i_count, sizeof(int));
-	os.write((char*)&indices, sizeof(unsigned long) * i_count);
+	size = sizeof(index_desc);
+	os.write((char*)&size, sizeof(size_t));
+	os.write((char*)&index_desc, sizeof(D3D11_BUFFER_DESC));
+
+	size = sizeof(vertex_data);
+	os.write((char*)&size, sizeof(size_t));
+	os.write((char*)&vertex_data, sizeof(D3D11_SUBRESOURCE_DATA));
+
+	size = sizeof(index_data);
+	os.write((char*)&size, sizeof(size_t));
+	os.write((char*)&index_data, sizeof(D3D11_SUBRESOURCE_DATA));
 	return os;
 }
 
-std::istream& BufferData::Read(std::istream& is, int& vc, int& ic, VertexType*& vert, unsigned long*& ind)
+std::istream& BufferData::Read(std::istream& is, D3D11_BUFFER_DESC& v_desc, D3D11_BUFFER_DESC& i_desc, 
+	D3D11_SUBRESOURCE_DATA& v_data, D3D11_SUBRESOURCE_DATA& i_data)
 {
-	int fill1, fill2;
-	is.read((char*)&fill1, sizeof(int));
-	vert = new VertexType[vc];
-	is.read((char*)&vert, sizeof(VertexType) * vc);
+	size_t size;
 
-	is.read((char*)&fill2, sizeof(int));
-	ind = new unsigned long[ic];
-	is.read((char*)&ind, sizeof(unsigned int) * ic);
+	is.read((char*)&size, sizeof(size_t));
+	is.read((char*)&v_desc, sizeof(D3D11_BUFFER_DESC));
+
+	is.read((char*)&size, sizeof(size_t));
+	is.read((char*)&i_desc, sizeof(D3D11_BUFFER_DESC));
+
+	is.read((char*)&size, sizeof(size_t));
+	is.read((char*)&v_data, sizeof(D3D11_SUBRESOURCE_DATA));
+
+	is.read((char*)&size, sizeof(size_t));
+	is.read((char*)&i_data, sizeof(D3D11_SUBRESOURCE_DATA));
 	return is;
 }

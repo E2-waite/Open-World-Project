@@ -57,7 +57,6 @@ private:
 	void ReleaseTexture();
 	bool LoadModel(const char*);
 	void ReleaseModel();
-	void SetupBuffers(ID3D11Device*, VertexType*, unsigned long*);
 private:
 	ID3D11Buffer *m_vertexBuffer, *m_indexBuffer;
 	int m_vertexCount, m_indexCount;
