@@ -4,13 +4,14 @@
 class BufferData
 {
 public:
-	BufferData(D3D11_BUFFER_DESC, D3D11_BUFFER_DESC, D3D11_SUBRESOURCE_DATA, D3D11_SUBRESOURCE_DATA);
+	BufferData(VertexType*, unsigned long*, int, int);
 	BufferData();
 	~BufferData();
 	std::ostream& Write(std::ostream&);
-	std::istream& Read(std::istream&, D3D11_BUFFER_DESC&, D3D11_BUFFER_DESC&, D3D11_SUBRESOURCE_DATA&, D3D11_SUBRESOURCE_DATA&);
+	std::istream& Read(std::istream&, VertexType*&, unsigned long*&, int&, int&);
 
 private:
-	D3D11_BUFFER_DESC vertex_desc, index_desc;
-	D3D11_SUBRESOURCE_DATA vertex_data, index_data;
+	VertexType* vertices;
+	unsigned long* indices;
+	int vertex_count, index_count;
 };
