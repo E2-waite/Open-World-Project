@@ -10,12 +10,10 @@ Chunk::~Chunk()
 
 }
 
-bool Chunk::Initialize(ID3D11Device* device, int x, int y, int num)
+bool Chunk::Initialize(ID3D11Device* device, int x, int y, int num, std::ostream& os)
 {
-	file_name = "Data/Chunks/chunk" + to_string(num) + ".bin";
-	std::ofstream bin_file(file_name, std::ios::trunc | std::ios::binary);
-	SetupObjects(device, x, y, bin_file);
-	bin_file.close();
+	read_pos = os.tellp();
+	SetupObjects(device, x, y, os);
 	loaded = true;
 	return true;
 }
@@ -52,15 +50,14 @@ void Chunk::DeleteChunk()
 	}
 }
 
-void Chunk::LoadChunk(ID3D11Device* device)
+void Chunk::LoadChunk(ID3D11Device* device, std::istream& is)
 {
-	std::ifstream bin_file(file_name, std::ios::binary);
-	floor->LoadBuffers(device, bin_file);
+	is.seekg(read_pos);
+	floor->LoadBuffers(device, is);
 	for (int i = 0; i < num_npcs; i++)
 	{
-		npc[i].LoadBuffers(device, bin_file);
+		npc[i].LoadBuffers(device, is);
 	}
-	bin_file.close();
 	loaded = true;
 }
 

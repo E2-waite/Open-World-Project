@@ -8,6 +8,8 @@ BufferData::BufferData() {}
 BufferData::~BufferData() {}
 std::ostream& BufferData::Write(std::ostream& os)
 {
+
+
 	size_t size;
 	size = sizeof(int);
 	os.write((char*)&size, sizeof(size_t));

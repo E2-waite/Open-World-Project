@@ -66,11 +66,13 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	for (int i = 0; i < chunks_x; ++i)
 		chunk[i] = new Chunk[chunks_y];
 	int chunk_num = 0;
+
+	std::ofstream bin_file("Data/Chunks/chunk.bin", std::ios::trunc | std::ios::binary);
 	for (int i = 0; i < chunks_x; ++i)
 	{
 		for (int j = 0; j < chunks_y; ++j)
 		{
-			result = chunk[i][j].Initialize(m_D3D->GetDevice(), i, j, chunk_num);
+			result = chunk[i][j].Initialize(m_D3D->GetDevice(), i, j, chunk_num, bin_file);
 			chunk_num++;
 			if (!result)
 			{
@@ -80,9 +82,9 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		}
 	}
 	
-	std::ofstream bin_file("Data / Chunks / PlayerData.bin", std::ofstream::trunc | std::ios::binary);
+	std::ofstream p_bin_file("Data / Chunks / PlayerData.bin", std::ofstream::trunc | std::ios::binary);
 	player = new Player;
-	player->Initialize(m_D3D->GetDevice(), bin_file);
+	player->Initialize(m_D3D->GetDevice(), p_bin_file);
 	bin_file.close();
 
 	// Create the light shader object.
@@ -159,13 +161,15 @@ void GraphicsClass::ShutdownChunks()
 
 void GraphicsClass::LoadChunks()
 {
+	std::ifstream bin_file("Data/Chunks/chunk.bin",  std::ios::binary);
 	for (int i = 0; i < chunks_x; ++i)
 	{
 		for (int j = 0; j < chunks_y; ++j)
 		{
-			chunk[i, j]->LoadChunk(m_D3D->GetDevice());
+			chunk[i, j]->LoadChunk(m_D3D->GetDevice(), bin_file);
 		}
 	}
+	bin_file.close();
 }
 
 void GraphicsClass::Shutdown()
@@ -243,7 +247,9 @@ bool GraphicsClass::Update(int mouse_x, int mouse_y)
 			{
 				if (!chunk[i][j].Loaded())
 				{
-					chunk[i][j].LoadChunk(m_D3D->GetDevice());
+					std::ifstream bin_file("Data/Chunks/chunk.bin", std::ios::binary);
+					chunk[i][j].LoadChunk(m_D3D->GetDevice(), bin_file);
+					bin_file.close();
 				}
 			}
 			else

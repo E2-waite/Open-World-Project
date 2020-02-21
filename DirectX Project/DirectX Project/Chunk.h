@@ -13,11 +13,11 @@ class Chunk
 public:
 	Chunk();
 	~Chunk();
-	bool Initialize(ID3D11Device*, int, int, int);
+	bool Initialize(ID3D11Device*, int, int, int, std::ostream&);
 	std::ostream& SetupObjects(ID3D11Device*, int, int, std::ostream&);
 	void Shutdown();
 	void DeleteChunk();
-	void LoadChunk(ID3D11Device*);
+	void LoadChunk(ID3D11Device*, std::istream&);
 	void Update();
 	void Render(ID3D11DeviceContext*, LightShaderClass*, LightClass*, D3DXMATRIX, D3DXMATRIX);
 	bool CheckRange(D3DXVECTOR3);
@@ -33,4 +33,5 @@ private:
 	bool loaded = false;
 	bool written = false;
 	string file_name;
+	int read_pos;
 };

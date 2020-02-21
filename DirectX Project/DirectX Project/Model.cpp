@@ -113,11 +113,11 @@ std::ostream& Model::InitializeBuffers(ID3D11Device* device, std::ostream& os)
 
 	BufferData buffers(vertices, indices, m_vertexCount, m_indexCount);
 	buffers.Write(os);
-
 	SetupBuffers(device, vertices, indices);
 
 	delete[]vertices;
 	delete[]indices;
+	delete[]m_model;
 	buffers_init = true;
 	buffers_loaded = true;
 	return os;

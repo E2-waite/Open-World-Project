@@ -13,6 +13,8 @@
 #include <d3dx10math.h>
 #include <fstream>
 #include <array>
+#include <string>
+#include <sstream>
 using namespace std;
 #include "Textureclass.h"
 #include "Structs.h"
@@ -77,7 +79,6 @@ private:
 	std::array<float, 3>* v_pos;
 	std::array<float, 2>* v_tex;
 	std::array<float, 3>* v_norm;
-	//Binary* binary;
 };
 
 #endif
