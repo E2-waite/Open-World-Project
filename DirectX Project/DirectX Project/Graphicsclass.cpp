@@ -65,27 +65,42 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	chunk = new Chunk*[chunks_x];
 	for (int i = 0; i < chunks_x; ++i)
 		chunk[i] = new Chunk[chunks_y];
-	int chunk_num = 0;
+	int num_chunks = chunks_x * chunks_y;
 
-	std::ofstream bin_file("Data/Chunks/chunk.bin", std::ios::trunc | std::ios::binary);
-	for (int i = 0; i < chunks_x; ++i)
+	if (FileExists(chunk_file))
 	{
-		for (int j = 0; j < chunks_y; ++j)
+		std::ifstream bin_read(chunk_file, std::ios::binary);
+		int read_num;
+		bin_read.read((char*)&read_num, sizeof(int));
+		if (read_num == num_chunks)
 		{
-			result = chunk[i][j].Initialize(m_D3D->GetDevice(), i, j, chunk_num, bin_file);
-			chunk_num++;
-			if (!result)
-			{
-				MessageBox(hwnd, "Could not initialize chunk", "Error", MB_OK);
-				return false;
-			}
+			// If read file has the same number of chunks as is required, read chunk data
+			LoadChunks(bin_read);
+			bin_read.close();
 		}
+		else
+		{
+			// Else create the chunk data and write new binary file
+			bin_read.close();
+			std::ofstream bin_write(chunk_file, std::ios::trunc | std::ios::binary);
+			bin_write.write((char*)&num_chunks, sizeof(int));
+			InitializeChunks(bin_write);
+			bin_write.close();
+		}
+	}
+	else
+	{
+		// If chunk binary file doesn't exist, create one
+		std::ofstream bin_write(chunk_file, std::ios::trunc | std::ios::binary);
+		bin_write.write((char*)&num_chunks, sizeof(int));
+		InitializeChunks(bin_write);
+		bin_write.close();
 	}
 	
 	std::ofstream p_bin_file("Data / Chunks / PlayerData.bin", std::ofstream::trunc | std::ios::binary);
 	player = new Player;
 	player->Initialize(m_D3D->GetDevice(), p_bin_file);
-	bin_file.close();
+	p_bin_file.close();
 
 	// Create the light shader object.
 	m_TextureShader = new TextureShaderClass;
@@ -148,6 +163,34 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	return true;
 }
 
+void GraphicsClass::InitializeChunks(std::ostream& os)
+{
+	for (int i = 0; i < chunks_x; ++i)
+	{
+		for (int j = 0; j < chunks_y; ++j)
+		{
+			chunk[i][j].Initialize(m_D3D->GetDevice(), i, j, os);
+		}
+	}
+}
+
+void GraphicsClass::LoadChunks(std::istream& is)
+{
+	for (int i = 0; i < chunks_x; ++i)
+	{
+		for (int j = 0; j < chunks_y; ++j)
+		{
+			chunk[i, j]->Load(m_D3D->GetDevice(), i, j, is);
+		}
+	}
+}
+
+bool GraphicsClass::FileExists(std::string name)
+{
+	struct stat buffer;
+	return (stat(name.c_str(), &buffer) == 0);
+}
+
 void GraphicsClass::ShutdownChunks()
 {
 	for (int i = 0; i < chunks_x; i++)
@@ -157,19 +200,6 @@ void GraphicsClass::ShutdownChunks()
 			chunk[i, j]->DeleteChunk();
 		}
 	}
-}
-
-void GraphicsClass::LoadChunks()
-{
-	std::ifstream bin_file("Data/Chunks/chunk.bin",  std::ios::binary);
-	for (int i = 0; i < chunks_x; ++i)
-	{
-		for (int j = 0; j < chunks_y; ++j)
-		{
-			chunk[i, j]->LoadChunk(m_D3D->GetDevice(), bin_file);
-		}
-	}
-	bin_file.close();
 }
 
 void GraphicsClass::Shutdown()

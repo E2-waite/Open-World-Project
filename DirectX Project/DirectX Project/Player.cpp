@@ -13,7 +13,7 @@ Player::~Player()
 std::ostream& Player::Initialize(ID3D11Device* device, std::ostream& os)
 {
 	model = new Model;
-	model->Initialize(device, "Data/Cube.txt", "Data/Player.dds", D3DXVECTOR3(0, 0, 0), D3DXVECTOR3(0, 0, 0), D3DXVECTOR3(1, 1, 1), os);
+	model->Create(device, "Data/Cube.txt", "Data/Player.dds", D3DXVECTOR3(0, 0, 0), D3DXVECTOR3(0, 0, 0), D3DXVECTOR3(1, 1, 1), os);
 	return os;
 }
 

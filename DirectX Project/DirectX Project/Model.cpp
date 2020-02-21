@@ -23,7 +23,7 @@ Model::~Model()
 }
  
 /// The Initialize function will call the initialization functions for the vertex and index buffers. 
-std::ostream& Model::Initialize(ID3D11Device* device, const char* modelFilename, const char* textureFilename, D3DXVECTOR3 rot, D3DXVECTOR3 pos, D3DXVECTOR3 scl, std::ostream& os)
+std::ostream& Model::Create(ID3D11Device* device, const char* modelFilename, const char* textureFilename, D3DXVECTOR3 rot, D3DXVECTOR3 pos, D3DXVECTOR3 scl, std::ostream& os)
 {
 	bool result;
 
@@ -44,6 +44,18 @@ std::ostream& Model::Initialize(ID3D11Device* device, const char* modelFilename,
 	D3DXMatrixIdentity(&m_worldMatrix);
 
 	return os;
+}
+
+void Model::Load(ID3D11Device* device, const char* textureFilename, D3DXVECTOR3 rot, D3DXVECTOR3 pos, D3DXVECTOR3 scl, std::istream& is)
+{
+	start_rot = rot;
+	start_pos = pos;
+	rotation = start_rot;
+	position = start_pos;
+	scale = scl;
+	LoadBuffers(device, is);
+	LoadTexture(device, textureFilename);
+	D3DXMatrixIdentity(&m_worldMatrix);
 }
 
 void Model::Shutdown()

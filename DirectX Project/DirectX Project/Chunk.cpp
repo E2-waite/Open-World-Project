@@ -10,7 +10,7 @@ Chunk::~Chunk()
 
 }
 
-bool Chunk::Initialize(ID3D11Device* device, int x, int y, int num, std::ostream& os)
+bool Chunk::Initialize(ID3D11Device* device, int x, int y, std::ostream& os)
 {
 	read_pos = os.tellp();
 	SetupObjects(device, x, y, os);
@@ -18,12 +18,21 @@ bool Chunk::Initialize(ID3D11Device* device, int x, int y, int num, std::ostream
 	return true;
 }
 
+bool Chunk::Load(ID3D11Device* device, int x, int y, std::istream& is)
+{
+	read_pos = is.tellg();
+	LoadObjects(device, x, y, is);
+	loaded = true;
+	return true;
+}
+
+
 std::ostream& Chunk::SetupObjects(ID3D11Device* device, int x, int y, std::ostream& os)
 {
 	// Setup floor:
 	pos[0] = x, pos[1] = y;
 	floor = new Model;
-	floor->Initialize(device, "Data/Floor.txt", "Data/Floor.dds", D3DXVECTOR3(0, 0, 0),
+	floor->Create(device, "Data/Floor.txt", "Data/Floor.dds", D3DXVECTOR3(0, 0, 0),
 		D3DXVECTOR3(pos[0] * chunk_size, -0.5, pos[1] * chunk_size), D3DXVECTOR3(chunk_size, chunk_size, chunk_size), os);
 	num_objects++;
 
@@ -33,11 +42,30 @@ std::ostream& Chunk::SetupObjects(ID3D11Device* device, int x, int y, std::ostre
 	float x_pos = 0;
 	for (int i = 0; i < num_npcs; i++)
 	{
-		npc[i].Initialize(device, "Data/Cube.txt", "Data/npc.dds", pos[0] * chunk_size, pos[1] * chunk_size, chunk_size, os);
+		npc[i].Create(device, "Data/Cube.txt", "Data/npc.dds", pos[0] * chunk_size, pos[1] * chunk_size, chunk_size, os);
 		x_pos += 3;
 		num_objects++;
 	}
 	return os;
+}
+
+void Chunk::LoadObjects(ID3D11Device* device, int x, int y, std::istream& is)
+{
+	pos[0] = x, pos[1] = y;
+	floor = new Model;
+	floor->Load(device,  "Data/Floor.dds", D3DXVECTOR3(0, 0, 0),
+		D3DXVECTOR3(pos[0] * chunk_size, -0.5, pos[1] * chunk_size), D3DXVECTOR3(chunk_size, chunk_size, chunk_size), is);
+	num_objects++;
+
+	npc = new NPC[num_npcs];
+	srand(time(NULL));
+	float x_pos = 0;
+	for (int i = 0; i < num_npcs; i++)
+	{
+		npc[i].Load(device, "Data/npc.dds", pos[0] * chunk_size, pos[1] * chunk_size, chunk_size, is);
+		x_pos += 3;
+		num_objects++;
+	}
 }
 
 void Chunk::DeleteChunk()

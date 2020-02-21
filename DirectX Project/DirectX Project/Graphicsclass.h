@@ -46,7 +46,6 @@ public:
 	GraphicsClass(const GraphicsClass&);
 	~GraphicsClass();
 	void ShutdownChunks();
-	void LoadChunks();
 	bool Initialize(int, int, HWND);
 	void Shutdown();
 	bool Update(int,int);
@@ -58,7 +57,9 @@ public:
 	void CamRotY(float);
 private:
 	bool Render(float);
-
+	bool FileExists(const std::string);
+	void InitializeChunks(std::ostream&);
+	void LoadChunks(std::istream&);
 private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
@@ -68,6 +69,7 @@ private:
 	TextureShaderClass* m_TextureShader;
 	LightClass* m_Light;
 	BitmapClass* m_Bitmap;
-	int chunks_x = 2, chunks_y = 2;
+	int chunks_x = 3, chunks_y = 2;
+	std::string chunk_file = "Data/Chunks/chunk.bin";
 };
 #endif
