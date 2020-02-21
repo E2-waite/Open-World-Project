@@ -33,7 +33,7 @@ public:
 	Model(const Model&);
 	~Model();
 	std::ostream& Create(ID3D11Device*, const char*, const char*, D3DXVECTOR3 rot, D3DXVECTOR3 pos, D3DXVECTOR3 scl, std::ostream&);
-	void Load(ID3D11Device*, const char*, D3DXVECTOR3 rot, D3DXVECTOR3 pos, D3DXVECTOR3 scl, std::istream&);
+	std::istream& Load(ID3D11Device*, const char*, D3DXVECTOR3 rot, D3DXVECTOR3 pos, D3DXVECTOR3 scl, std::istream&);
 	std::istream& LoadBuffers(ID3D11Device* device, std::istream&);
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);

@@ -13,6 +13,9 @@ Chunk::~Chunk()
 bool Chunk::Initialize(ID3D11Device* device, int x, int y, std::ostream& os)
 {
 	read_pos = os.tellp();
+	std::stringstream ss;
+	ss << "Generating" << std::endl;
+	OutputDebugString(ss.str().c_str());
 	SetupObjects(device, x, y, os);
 	loaded = true;
 	return true;
@@ -21,6 +24,9 @@ bool Chunk::Initialize(ID3D11Device* device, int x, int y, std::ostream& os)
 bool Chunk::Load(ID3D11Device* device, int x, int y, std::istream& is)
 {
 	read_pos = is.tellg();
+	std::stringstream ss;
+	ss << "LOADING" << std::endl;
+	OutputDebugString(ss.str().c_str());
 	LoadObjects(device, x, y, is);
 	loaded = true;
 	return true;
@@ -49,7 +55,7 @@ std::ostream& Chunk::SetupObjects(ID3D11Device* device, int x, int y, std::ostre
 	return os;
 }
 
-void Chunk::LoadObjects(ID3D11Device* device, int x, int y, std::istream& is)
+std::istream& Chunk::LoadObjects(ID3D11Device* device, int x, int y, std::istream& is)
 {
 	pos[0] = x, pos[1] = y;
 	floor = new Model;
@@ -66,6 +72,7 @@ void Chunk::LoadObjects(ID3D11Device* device, int x, int y, std::istream& is)
 		x_pos += 3;
 		num_objects++;
 	}
+	return is;
 }
 
 void Chunk::DeleteChunk()

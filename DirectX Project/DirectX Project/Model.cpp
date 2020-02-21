@@ -46,7 +46,7 @@ std::ostream& Model::Create(ID3D11Device* device, const char* modelFilename, con
 	return os;
 }
 
-void Model::Load(ID3D11Device* device, const char* textureFilename, D3DXVECTOR3 rot, D3DXVECTOR3 pos, D3DXVECTOR3 scl, std::istream& is)
+std::istream& Model::Load(ID3D11Device* device, const char* textureFilename, D3DXVECTOR3 rot, D3DXVECTOR3 pos, D3DXVECTOR3 scl, std::istream& is)
 {
 	start_rot = rot;
 	start_pos = pos;
@@ -56,6 +56,7 @@ void Model::Load(ID3D11Device* device, const char* textureFilename, D3DXVECTOR3 
 	LoadBuffers(device, is);
 	LoadTexture(device, textureFilename);
 	D3DXMatrixIdentity(&m_worldMatrix);
+	return is;
 }
 
 void Model::Shutdown()

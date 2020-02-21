@@ -69,7 +69,7 @@ private:
 	TextureShaderClass* m_TextureShader;
 	LightClass* m_Light;
 	BitmapClass* m_Bitmap;
-	int chunks_x = 3, chunks_y = 2;
+	int chunks_x = 10, chunks_y = 5;
 	std::string chunk_file = "Data/Chunks/chunk.bin";
 };
 #endif

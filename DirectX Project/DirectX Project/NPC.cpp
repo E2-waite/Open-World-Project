@@ -46,7 +46,7 @@ std::ostream& NPC::Create(ID3D11Device* device, const char* modelFilename, const
 void NPC::Load(ID3D11Device* device, const char* textureFilename, int x, int y, int size, std::istream& is)
 {
 	x_offset = x, y_offset = y, chunk_size = size;
-	model = new Model;
+	model = new Model();
 
 	float rand_x = rand() % chunk_size + 0;
 	float rand_y = rand() % chunk_size + 0;

@@ -16,7 +16,7 @@ public:
 	bool Initialize(ID3D11Device*, int, int,  std::ostream&);
 	bool Load(ID3D11Device*, int, int, std::istream&);
 	std::ostream& SetupObjects(ID3D11Device*, int, int, std::ostream&);
-	void LoadObjects(ID3D11Device*, int, int, std::istream&);
+	std::istream& LoadObjects(ID3D11Device*, int, int, std::istream&);
 	void Shutdown();
 	void DeleteChunk();
 	void LoadChunk(ID3D11Device*, std::istream&);

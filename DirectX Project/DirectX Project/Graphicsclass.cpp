@@ -180,7 +180,7 @@ void GraphicsClass::LoadChunks(std::istream& is)
 	{
 		for (int j = 0; j < chunks_y; ++j)
 		{
-			chunk[i, j]->Load(m_D3D->GetDevice(), i, j, is);
+			chunk[i][j].Load(m_D3D->GetDevice(), i, j, is);
 		}
 	}
 }
