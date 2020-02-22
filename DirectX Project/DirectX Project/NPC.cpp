@@ -22,10 +22,14 @@ void NPC::LoadBuffers(ID3D11Device* device, std::istream& is)
 void NPC::ShutdownBuffers() { model->ShutdownBuffers(); }
 void NPC::Shutdown(std::ostream& os)
 {
-
+	// Writes NPC data when closing the game
+	npcData data(model->GetPosition(), target_pos, model->GetRotation(), model->GetScale());
+	data.Write(os);
 }
+
 void NPC::Create(ID3D11Device* device, const char* modelFilename, const char* textureFilename, int x, int y, std::ostream& os)
 {
+	// Create new NPC from scratch
 	x_offset = x, y_offset = y;
 	model = new Model;
 
@@ -45,18 +49,18 @@ void NPC::Create(ID3D11Device* device, const char* modelFilename, const char* te
 }
 
 void NPC::Load(ID3D11Device* device, const char* textureFilename, int x, int y, std::istream& is, std::istream& npc_data)
-{
+{ 
+	// Setup NPC from loaded geometry and position data from binary files
 	x_offset = x, y_offset = y;
 	model = new Model();
 
-	float rand_x = rand() % chunk_size + 0;
-	float rand_y = rand() % chunk_size + 0;
-	start_pos = D3DXVECTOR3(rand_x + x_offset, 0, rand_y + y_offset);
-	model->Load(device, textureFilename, D3DXVECTOR3(0, 0, 0), start_pos, D3DXVECTOR3(1, 1, 1), is);
+	// Read NPC position, target position, rotation and scale from binary file (written when closing previous game instance)
+	D3DXVECTOR3 pos, rot, scl;
+	npcData data;
+	data.Read(npc_data, pos, target_pos, rot, scl);
+	model->Load(device, textureFilename, rot, pos, scl, is);
+	start_pos = pos;
 
-	rand_x = rand() % chunk_size + 0;
-	rand_y = rand() % chunk_size + 0;
-	target_pos = D3DXVECTOR3(rand_x + x_offset, 0, rand_y + y_offset);
 	float distance = sqrt(pow(target_pos.x - start_pos.x, 2) + pow(target_pos.z - start_pos.z, 2));
 	direction = D3DXVECTOR3((target_pos.x - start_pos.x) / distance, 0, (target_pos.z - start_pos.z) / distance);
 	moving = true;

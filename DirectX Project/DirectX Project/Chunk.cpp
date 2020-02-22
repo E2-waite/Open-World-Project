@@ -79,7 +79,7 @@ void Chunk::Delete()
 
 void Chunk::Shutdown(std::ostream& os)
 {
-	floor->Shutdown();
+	floor->Shutdown(); 
 	for (int i = 0; i < num_npcs; i++)
 	{
 		npc[i].Shutdown(os);

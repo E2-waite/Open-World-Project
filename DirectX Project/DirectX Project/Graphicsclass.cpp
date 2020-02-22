@@ -200,9 +200,10 @@ bool GraphicsClass::FileExists(std::string name)
 
 void GraphicsClass::DeleteChunks()
 {
-	for (int i = 0; i < chunks_x; i++)
+	// Delete chunk geometry data from memory
+	for (int i = 0; i < chunks_x; ++i)
 	{
-		for (int j = 0; j < chunks_y; j++)
+		for (int j = 0; j < chunks_y; ++j)
 		{
 			chunk[i, j]->Delete();
 		}
@@ -211,12 +212,13 @@ void GraphicsClass::DeleteChunks()
 
 void GraphicsClass::ShutdownChunks()
 {
-	ofstream npc_data(npc_file, std::ios::trunc | std::ios::binary);
-	for (int i = 0; i < chunks_x; i++)
+	// Shutdown chunk (saving NPC data)
+	ofstream npc_data(npc_file, std::ios::binary);
+	for (int i = 0; i < chunks_x; ++i)
 	{
-		for (int j = 0; j < chunks_y; j++)
+		for (int j = 0; j < chunks_y; ++j)
 		{
-			chunk[i, j]->Shutdown(npc_data);
+			chunk[i][j].Shutdown(npc_data);
 		}
 	}
 }
