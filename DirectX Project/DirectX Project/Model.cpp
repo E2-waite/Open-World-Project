@@ -48,10 +48,8 @@ std::ostream& Model::Create(ID3D11Device* device, const char* modelFilename, con
 
 std::istream& Model::Load(ID3D11Device* device, const char* textureFilename, D3DXVECTOR3 rot, D3DXVECTOR3 pos, D3DXVECTOR3 scl, std::istream& is)
 {
-	start_rot = rot;
-	start_pos = pos;
-	rotation = start_rot;
-	position = start_pos;
+	rotation = rot;
+	position = pos;
 	scale = scl;
 	LoadBuffers(device, is);
 	LoadTexture(device, textureFilename);
@@ -304,9 +302,6 @@ bool Model::LoadModel(const char* filename)
 	fin.get(input);
 	fin.get(input);
 
-	v_pos = new std::array<float, 3>[m_vertexCount];
-	v_tex = new std::array<float, 2>[m_vertexCount];
-	v_norm = new std::array<float, 3>[m_vertexCount];
 	// Read in vertex data and assign to m_model
 	for (int i = 0; i < m_vertexCount; i++)
 	{

@@ -13,9 +13,6 @@ Chunk::~Chunk()
 bool Chunk::Initialize(ID3D11Device* device, int x, int y, std::ostream& os)
 {
 	read_pos = os.tellp();
-	std::stringstream ss;
-	ss << "Generating" << std::endl;
-	OutputDebugString(ss.str().c_str());
 	SetupObjects(device, x, y, os);
 	loaded = true;
 	return true;
@@ -24,9 +21,6 @@ bool Chunk::Initialize(ID3D11Device* device, int x, int y, std::ostream& os)
 bool Chunk::Load(ID3D11Device* device, int x, int y, std::istream& is)
 {
 	read_pos = is.tellg();
-	std::stringstream ss;
-	ss << "LOADING" << std::endl;
-	OutputDebugString(ss.str().c_str());
 	LoadObjects(device, x, y, is);
 	loaded = true;
 	return true;
@@ -48,7 +42,7 @@ std::ostream& Chunk::SetupObjects(ID3D11Device* device, int x, int y, std::ostre
 	float x_pos = 0;
 	for (int i = 0; i < num_npcs; i++)
 	{
-		npc[i].Create(device, "Data/Cube.txt", "Data/npc.dds", pos[0] * chunk_size, pos[1] * chunk_size, chunk_size, os);
+		npc[i].Create(device, "Data/Cube.txt", "Data/npc.dds", pos[0] * chunk_size, pos[1] * chunk_size, os);
 		x_pos += 3;
 		num_objects++;
 	}
@@ -68,7 +62,7 @@ std::istream& Chunk::LoadObjects(ID3D11Device* device, int x, int y, std::istrea
 	float x_pos = 0;
 	for (int i = 0; i < num_npcs; i++)
 	{
-		npc[i].Load(device, "Data/npc.dds", pos[0] * chunk_size, pos[1] * chunk_size, chunk_size, is);
+		npc[i].Load(device, "Data/npc.dds", pos[0] * chunk_size, pos[1] * chunk_size, is);
 		x_pos += 3;
 		num_objects++;
 	}
@@ -127,10 +121,10 @@ bool Chunk::CheckRange(D3DXVECTOR3 player_pos)
 	D3DXVECTOR3 top_right = D3DXVECTOR3(floor->GetPosition().x + chunk_size, 0, floor->GetPosition().z);
 	D3DXVECTOR3 btm_left = D3DXVECTOR3(floor->GetPosition().x, 0, floor->GetPosition().z + chunk_size);
 	D3DXVECTOR3 btm_right = D3DXVECTOR3(floor->GetPosition().x + chunk_size, 0, floor->GetPosition().z + chunk_size);
-	if (sqrt(pow(player_pos.x - top_left.x, 2) + pow(player_pos.z - top_left.z, 2)) < load_range) return true;
-	if (sqrt(pow(player_pos.x - top_right.x, 2) + pow(player_pos.z - top_right.z, 2)) < load_range) return true;
-	if (sqrt(pow(player_pos.x - btm_left.x, 2) + pow(player_pos.z - btm_left.z, 2)) < load_range) return true;
-	if (sqrt(pow(player_pos.x - btm_right.x, 2) + pow(player_pos.z - btm_right.z, 2)) < load_range) return true;
+	if (sqrt(pow(player_pos.x - top_left.x, 2) + pow(player_pos.z - top_left.z, 2)) < chunk_size) return true;
+	if (sqrt(pow(player_pos.x - top_right.x, 2) + pow(player_pos.z - top_right.z, 2)) < chunk_size) return true;
+	if (sqrt(pow(player_pos.x - btm_left.x, 2) + pow(player_pos.z - btm_left.z, 2)) < chunk_size) return true;
+	if (sqrt(pow(player_pos.x - btm_right.x, 2) + pow(player_pos.z - btm_right.z, 2)) < chunk_size) return true;
 	return false;
 }
 

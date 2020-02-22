@@ -22,9 +22,9 @@ std::istream& NPC::LoadBuffers(ID3D11Device* device, std::istream& is)
 }
 void NPC::ShutdownBuffers() { model->ShutdownBuffers(); }
 
-std::ostream& NPC::Create(ID3D11Device* device, const char* modelFilename, const char* textureFilename, int x, int y, int size, std::ostream& os)
+std::ostream& NPC::Create(ID3D11Device* device, const char* modelFilename, const char* textureFilename, int x, int y, std::ostream& os)
 {
-	x_offset = x, y_offset = y, chunk_size = size;
+	x_offset = x, y_offset = y;
 	model = new Model;
 
 	// Initialize model in random location within current chunk
@@ -43,9 +43,9 @@ std::ostream& NPC::Create(ID3D11Device* device, const char* modelFilename, const
 	return os;
 }
 
-void NPC::Load(ID3D11Device* device, const char* textureFilename, int x, int y, int size, std::istream& is)
+void NPC::Load(ID3D11Device* device, const char* textureFilename, int x, int y, std::istream& is)
 {
-	x_offset = x, y_offset = y, chunk_size = size;
+	x_offset = x, y_offset = y;
 	model = new Model();
 
 	float rand_x = rand() % chunk_size + 0;

@@ -12,14 +12,15 @@ using namespace std;
 #include "Textureclass.h"
 #include "Model.h"
 #include "D3dclass.h"
+#include "Consts.h"
 class NPC
 {
 public:
 	NPC();
 	NPC(const NPC&);
 	~NPC();
-	std::ostream& Create(ID3D11Device*, const char*, const char*, int, int, int, std::ostream&);
-	void Load(ID3D11Device*, const char*, int, int, int, std::istream&);
+	std::ostream& Create(ID3D11Device*, const char*, const char*, int, int,  std::ostream&);
+	void Load(ID3D11Device*, const char*, int, int, std::istream&);
 	std::istream& LoadBuffers(ID3D11Device*, std::istream&);
 	void ShutdownBuffers();
 	void Render(ID3D11DeviceContext*);
@@ -39,6 +40,5 @@ private:
 	float elapsed = 0.01f;
 	bool moving = false;
 	int x_offset, y_offset;
-	int chunk_size;
 };
 

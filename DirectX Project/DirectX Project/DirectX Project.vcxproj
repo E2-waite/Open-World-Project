@@ -122,7 +122,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Binary.cpp" />
     <ClCompile Include="Bitmapclass.cpp" />
     <ClCompile Include="BufferData.cpp" />
     <ClCompile Include="Cameraclass.cpp" />
@@ -146,7 +145,6 @@
     <ClCompile Include="Textureshaderclass.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Binary.h" />
     <ClInclude Include="Bitmapclass.h" />
     <ClInclude Include="BufferData.h" />
     <ClInclude Include="Cameraclass.h" />
@@ -170,7 +168,6 @@
     <ClInclude Include="NPC.h" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="Structs.h" />
     <ClInclude Include="Systemclass.h" />
     <ClInclude Include="Textureclass.h" />
     <ClInclude Include="Textureshaderclass.h" />

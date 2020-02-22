@@ -78,9 +78,6 @@
     <ClCompile Include="Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Binary.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="BufferData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -155,16 +152,10 @@
     <ClInclude Include="json.hpp">
       <Filter>Resource Files</Filter>
     </ClInclude>
-    <ClInclude Include="Binary.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Consts.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Structs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BufferData.h">

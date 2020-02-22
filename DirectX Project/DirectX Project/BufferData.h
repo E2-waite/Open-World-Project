@@ -1,6 +1,6 @@
 #pragma once
 #include <fstream>
-#include "Structs.h"
+#include "Consts.h"
 class BufferData
 {
 public:

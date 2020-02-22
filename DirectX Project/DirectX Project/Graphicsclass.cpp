@@ -67,11 +67,17 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		chunk[i] = new Chunk[chunks_y];
 	int num_chunks = chunks_x * chunks_y;
 
-	if (FileExists(chunk_file))
+	std::stringstream ss;
+	ss << "Num chunks: " << num_chunks << std::endl;
+
+	if (FileExists(buffer_file))
 	{
-		std::ifstream bin_read(chunk_file, std::ios::binary);
+		std::ifstream bin_read(buffer_file, std::ios::binary);
 		int read_num;
 		bin_read.read((char*)&read_num, sizeof(int));
+
+		ss << "Read num: " << read_num << std::endl;
+		OutputDebugString(ss.str().c_str());
 		if (read_num == num_chunks)
 		{
 			// If read file has the same number of chunks as is required, read chunk data
@@ -82,7 +88,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		{
 			// Else create the chunk data and write new binary file
 			bin_read.close();
-			std::ofstream bin_write(chunk_file, std::ios::trunc | std::ios::binary);
+			std::ofstream bin_write(buffer_file, std::ios::trunc | std::ios::binary);
 			bin_write.write((char*)&num_chunks, sizeof(int));
 			InitializeChunks(bin_write);
 			bin_write.close();
@@ -91,13 +97,13 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	else
 	{
 		// If chunk binary file doesn't exist, create one
-		std::ofstream bin_write(chunk_file, std::ios::trunc | std::ios::binary);
+		std::ofstream bin_write(buffer_file, std::ios::trunc | std::ios::binary);
 		bin_write.write((char*)&num_chunks, sizeof(int));
 		InitializeChunks(bin_write);
 		bin_write.close();
 	}
 	
-	std::ofstream p_bin_file("Data / Chunks / PlayerData.bin", std::ofstream::trunc | std::ios::binary);
+	std::ofstream p_bin_file("Data / Chunks / Playerata.bin", std::ofstream::trunc | std::ios::binary);
 	player = new Player;
 	player->Initialize(m_D3D->GetDevice(), p_bin_file);
 	p_bin_file.close();
@@ -169,7 +175,7 @@ void GraphicsClass::InitializeChunks(std::ostream& os)
 	{
 		for (int j = 0; j < chunks_y; ++j)
 		{
-			chunk[i][j].Initialize(m_D3D->GetDevice(), i, j, os);
+			chunk[i][j].Initialize(m_D3D->GetDevice(), i, j,  os);
 		}
 	}
 }

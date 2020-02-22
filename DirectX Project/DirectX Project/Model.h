@@ -17,8 +17,7 @@
 #include <sstream>
 using namespace std;
 #include "Textureclass.h"
-#include "Structs.h"
-#include "Binary.h"
+#include "Consts.h"
 #include "BufferData.h"
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: Model
@@ -77,9 +76,6 @@ private:
 	float height = 0;
 	bool buffers_init = false;
 	bool buffers_loaded = false;
-	std::array<float, 3>* v_pos;
-	std::array<float, 2>* v_tex;
-	std::array<float, 3>* v_norm;
 };
 
 #endif

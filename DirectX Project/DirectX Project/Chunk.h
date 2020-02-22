@@ -7,13 +7,13 @@
 #include "Lightshaderclass.h"
 #include "Lightclass.h"
 #include "Consts.h"
-#include "Binary.h"
+
 class Chunk
 {
 public:
 	Chunk();
 	~Chunk();
-	bool Initialize(ID3D11Device*, int, int,  std::ostream&);
+	bool Initialize(ID3D11Device*, int, int, std::ostream&);
 	bool Load(ID3D11Device*, int, int, std::istream&);
 	std::ostream& SetupObjects(ID3D11Device*, int, int, std::ostream&);
 	std::istream& LoadObjects(ID3D11Device*, int, int, std::istream&);
@@ -29,7 +29,6 @@ private:
 	NPC* npc;
 	int num_npcs = 10;
 	int pos[2];
-	int chunk_size = 25;
 	int num_objects = 0;
 	float load_range = 25;
 	bool loaded = false;
