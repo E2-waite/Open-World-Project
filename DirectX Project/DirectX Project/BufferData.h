@@ -7,8 +7,8 @@ public:
 	BufferData(VertexType*, unsigned long*, int, int);
 	BufferData();
 	~BufferData();
-	std::ostream& Write(std::ostream&);
-	std::istream& Read(std::istream&, VertexType*&, unsigned long*&, int&, int&);
+	void Write(std::ostream&);
+	void Read(std::istream&, VertexType*&, unsigned long*&, int&, int&);
 
 private:
 	VertexType* vertices;

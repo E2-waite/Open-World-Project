@@ -44,6 +44,7 @@ public:
 	GraphicsClass();
 	GraphicsClass(const GraphicsClass&);
 	~GraphicsClass();
+	void DeleteChunks();
 	void ShutdownChunks();
 	bool Initialize(int, int, HWND);
 	void Shutdown();
@@ -57,8 +58,8 @@ public:
 private:
 	bool Render(float);
 	bool FileExists(const std::string);
-	void InitializeChunks(std::ostream&);
-	void LoadChunks(std::istream&);
+	void InitializeObjects(std::ostream&);
+	void LoadObjects(std::istream&);
 private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;

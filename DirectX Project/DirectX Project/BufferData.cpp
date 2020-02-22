@@ -1,15 +1,12 @@
 #include "BufferData.h"
 
-
 BufferData::BufferData(VertexType* vertices, unsigned long* indices, int vertex_count, int index_count)
 	: vertices(vertices), indices(indices), vertex_count(vertex_count), index_count(index_count) {}
 
 BufferData::BufferData() {}
 BufferData::~BufferData() {}
-std::ostream& BufferData::Write(std::ostream& os)
+void BufferData::Write(std::ostream& os)
 {
-
-
 	size_t size;
 	size = sizeof(int);
 	os.write((char*)&size, sizeof(size_t));
@@ -32,11 +29,9 @@ std::ostream& BufferData::Write(std::ostream& os)
 		os.write((char*)&size, sizeof(size_t));
 		os.write((char*)&indices[i], size);
 	}
-	
-	return os;
 }
 
-std::istream& BufferData::Read(std::istream& is, VertexType*& vert, unsigned long*& ind, int& v_count, int& i_count)
+void BufferData::Read(std::istream& is, VertexType*& vert, unsigned long*& ind, int& v_count, int& i_count)
 {
 	size_t size;
 	is.read((char*)&size, sizeof(size_t));
@@ -58,5 +53,4 @@ std::istream& BufferData::Read(std::istream& is, VertexType*& vert, unsigned lon
 		is.read((char*)&size, sizeof(size_t));
 		is.read((char*)&ind[i], size);
 	}
-	return is;
 }

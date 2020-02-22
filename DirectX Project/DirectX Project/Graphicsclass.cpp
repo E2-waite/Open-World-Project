@@ -81,7 +81,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		if (read_num == num_chunks)
 		{
 			// If read file has the same number of chunks as is required, read chunk data
-			LoadChunks(bin_read);
+			LoadObjects(bin_read);
 			bin_read.close();
 		}
 		else
@@ -90,7 +90,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 			bin_read.close();
 			std::ofstream bin_write(buffer_file, std::ios::trunc | std::ios::binary);
 			bin_write.write((char*)&num_chunks, sizeof(int));
-			InitializeChunks(bin_write);
+			InitializeObjects(bin_write);
 			bin_write.close();
 		}
 	}
@@ -99,14 +99,9 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		// If chunk binary file doesn't exist, create one
 		std::ofstream bin_write(buffer_file, std::ios::trunc | std::ios::binary);
 		bin_write.write((char*)&num_chunks, sizeof(int));
-		InitializeChunks(bin_write);
+		InitializeObjects(bin_write);
 		bin_write.close();
 	}
-	
-	std::ofstream p_bin_file("Data / Chunks / Playerata.bin", std::ofstream::trunc | std::ios::binary);
-	player = new Player;
-	player->Initialize(m_D3D->GetDevice(), p_bin_file);
-	p_bin_file.close();
 
 	// Create the light shader object.
 	m_TextureShader = new TextureShaderClass;
@@ -169,26 +164,32 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	return true;
 }
 
-void GraphicsClass::InitializeChunks(std::ostream& os)
+void GraphicsClass::InitializeObjects(std::ostream& geometry_data)
 {
+	player = new Player;
+	player->Initialize(m_D3D->GetDevice(), geometry_data);
 	for (int i = 0; i < chunks_x; ++i)
 	{
 		for (int j = 0; j < chunks_y; ++j)
 		{
-			chunk[i][j].Initialize(m_D3D->GetDevice(), i, j,  os);
+			chunk[i][j].Initialize(m_D3D->GetDevice(), i, j,  geometry_data);
 		}
 	}
 }
 
-void GraphicsClass::LoadChunks(std::istream& is)
+void GraphicsClass::LoadObjects(std::istream& geometry_data)
 {
+	player = new Player;
+	player->Load(m_D3D->GetDevice(), geometry_data);
+	ifstream npc_data(npc_file, std::ios::binary);
 	for (int i = 0; i < chunks_x; ++i)
 	{
 		for (int j = 0; j < chunks_y; ++j)
 		{
-			chunk[i][j].Load(m_D3D->GetDevice(), i, j, is);
+			chunk[i][j].Load(m_D3D->GetDevice(), i, j, geometry_data, npc_data);
 		}
 	}
+	npc_data.close();
 }
 
 bool GraphicsClass::FileExists(std::string name)
@@ -197,13 +198,25 @@ bool GraphicsClass::FileExists(std::string name)
 	return (stat(name.c_str(), &buffer) == 0);
 }
 
-void GraphicsClass::ShutdownChunks()
+void GraphicsClass::DeleteChunks()
 {
 	for (int i = 0; i < chunks_x; i++)
 	{
 		for (int j = 0; j < chunks_y; j++)
 		{
-			chunk[i, j]->DeleteChunk();
+			chunk[i, j]->Delete();
+		}
+	}
+}
+
+void GraphicsClass::ShutdownChunks()
+{
+	ofstream npc_data(npc_file, std::ios::trunc | std::ios::binary);
+	for (int i = 0; i < chunks_x; i++)
+	{
+		for (int j = 0; j < chunks_y; j++)
+		{
+			chunk[i, j]->Shutdown(npc_data);
 		}
 	}
 }
@@ -234,7 +247,6 @@ void GraphicsClass::Shutdown()
 		m_Bitmap = 0;
 	}
 
-
 	// Release the camera object.
 	if (m_Camera)
 	{
@@ -250,6 +262,8 @@ void GraphicsClass::Shutdown()
 		delete m_D3D;
 		m_D3D = 0;
 	}
+
+	ShutdownChunks();
 	return;
 }
 
@@ -283,7 +297,7 @@ bool GraphicsClass::Update(int mouse_x, int mouse_y)
 			{
 				if (!chunk[i][j].Loaded())
 				{
-					std::ifstream bin_file("Data/Chunks/chunk.bin", std::ios::binary);
+					std::ifstream bin_file(buffer_file, std::ios::binary);
 					chunk[i][j].LoadChunk(m_D3D->GetDevice(), bin_file);
 					bin_file.close();
 				}
@@ -292,7 +306,7 @@ bool GraphicsClass::Update(int mouse_x, int mouse_y)
 			{
 				if (chunk[i][j].Loaded())
 				{
-					chunk[i][j].DeleteChunk();
+					chunk[i][j].Delete();
 				}
 			}
 		}

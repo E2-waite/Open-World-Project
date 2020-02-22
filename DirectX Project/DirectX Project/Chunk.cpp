@@ -10,30 +10,30 @@ Chunk::~Chunk()
 
 }
 
-bool Chunk::Initialize(ID3D11Device* device, int x, int y, std::ostream& os)
+bool Chunk::Initialize(ID3D11Device* device, int x, int y, std::ostream& geometry_data)
 {
-	read_pos = os.tellp();
-	SetupObjects(device, x, y, os);
+	read_pos = geometry_data.tellp();
+	SetupObjects(device, x, y, geometry_data);
 	loaded = true;
 	return true;
 }
 
-bool Chunk::Load(ID3D11Device* device, int x, int y, std::istream& is)
+bool Chunk::Load(ID3D11Device* device, int x, int y, std::istream& geometry_data, std::istream& npc_data)
 {
-	read_pos = is.tellg();
-	LoadObjects(device, x, y, is);
+	read_pos = geometry_data.tellg();
+	LoadObjects(device, x, y, geometry_data, npc_data);
 	loaded = true;
 	return true;
 }
 
 
-std::ostream& Chunk::SetupObjects(ID3D11Device* device, int x, int y, std::ostream& os)
+void Chunk::SetupObjects(ID3D11Device* device, int x, int y, std::ostream& geometry_data)
 {
 	// Setup floor:
 	pos[0] = x, pos[1] = y;
 	floor = new Model;
 	floor->Create(device, "Data/Floor.txt", "Data/Floor.dds", D3DXVECTOR3(0, 0, 0),
-		D3DXVECTOR3(pos[0] * chunk_size, -0.5, pos[1] * chunk_size), D3DXVECTOR3(chunk_size, chunk_size, chunk_size), os);
+		D3DXVECTOR3(pos[0] * chunk_size, -0.5, pos[1] * chunk_size), D3DXVECTOR3(chunk_size, chunk_size, chunk_size), geometry_data);
 	num_objects++;
 
 	// Setup npcs:
@@ -42,19 +42,18 @@ std::ostream& Chunk::SetupObjects(ID3D11Device* device, int x, int y, std::ostre
 	float x_pos = 0;
 	for (int i = 0; i < num_npcs; i++)
 	{
-		npc[i].Create(device, "Data/Cube.txt", "Data/npc.dds", pos[0] * chunk_size, pos[1] * chunk_size, os);
+		npc[i].Create(device, "Data/Cube.txt", "Data/npc.dds", pos[0] * chunk_size, pos[1] * chunk_size, geometry_data);
 		x_pos += 3;
 		num_objects++;
 	}
-	return os;
 }
 
-std::istream& Chunk::LoadObjects(ID3D11Device* device, int x, int y, std::istream& is)
+void Chunk::LoadObjects(ID3D11Device* device, int x, int y, std::istream& geometry_data, std::istream& npc_data)
 {
 	pos[0] = x, pos[1] = y;
 	floor = new Model;
 	floor->Load(device,  "Data/Floor.dds", D3DXVECTOR3(0, 0, 0),
-		D3DXVECTOR3(pos[0] * chunk_size, -0.5, pos[1] * chunk_size), D3DXVECTOR3(chunk_size, chunk_size, chunk_size), is);
+		D3DXVECTOR3(pos[0] * chunk_size, -0.5, pos[1] * chunk_size), D3DXVECTOR3(chunk_size, chunk_size, chunk_size), geometry_data);
 	num_objects++;
 
 	npc = new NPC[num_npcs];
@@ -62,14 +61,13 @@ std::istream& Chunk::LoadObjects(ID3D11Device* device, int x, int y, std::istrea
 	float x_pos = 0;
 	for (int i = 0; i < num_npcs; i++)
 	{
-		npc[i].Load(device, "Data/npc.dds", pos[0] * chunk_size, pos[1] * chunk_size, is);
+		npc[i].Load(device, "Data/npc.dds", pos[0] * chunk_size, pos[1] * chunk_size, geometry_data, npc_data);
 		x_pos += 3;
 		num_objects++;
 	}
-	return is;
 }
 
-void Chunk::DeleteChunk()
+void Chunk::Delete()
 {
 	loaded = false;
 	floor->ShutdownBuffers();
@@ -79,13 +77,22 @@ void Chunk::DeleteChunk()
 	}
 }
 
-void Chunk::LoadChunk(ID3D11Device* device, std::istream& is)
+void Chunk::Shutdown(std::ostream& os)
 {
-	is.seekg(read_pos);
-	floor->LoadBuffers(device, is);
+	floor->Shutdown();
 	for (int i = 0; i < num_npcs; i++)
 	{
-		npc[i].LoadBuffers(device, is);
+		npc[i].Shutdown(os);
+	}
+}
+
+void Chunk::LoadChunk(ID3D11Device* device, std::istream& geometry_data)
+{
+	geometry_data.seekg(read_pos);
+	floor->LoadBuffers(device, geometry_data);
+	for (int i = 0; i < num_npcs; i++)
+	{
+		npc[i].LoadBuffers(device, geometry_data);
 	}
 	loaded = true;
 }

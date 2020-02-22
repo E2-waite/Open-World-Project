@@ -23,7 +23,7 @@ Model::~Model()
 }
  
 /// The Initialize function will call the initialization functions for the vertex and index buffers. 
-std::ostream& Model::Create(ID3D11Device* device, const char* modelFilename, const char* textureFilename, D3DXVECTOR3 rot, D3DXVECTOR3 pos, D3DXVECTOR3 scl, std::ostream& os)
+void Model::Create(ID3D11Device* device, const char* modelFilename, const char* textureFilename, D3DXVECTOR3 rot, D3DXVECTOR3 pos, D3DXVECTOR3 scl, std::ostream& os)
 {
 	bool result;
 
@@ -42,11 +42,9 @@ std::ostream& Model::Create(ID3D11Device* device, const char* modelFilename, con
 	result = LoadTexture(device, textureFilename);
 
 	D3DXMatrixIdentity(&m_worldMatrix);
-
-	return os;
 }
 
-std::istream& Model::Load(ID3D11Device* device, const char* textureFilename, D3DXVECTOR3 rot, D3DXVECTOR3 pos, D3DXVECTOR3 scl, std::istream& is)
+void Model::Load(ID3D11Device* device, const char* textureFilename, D3DXVECTOR3 rot, D3DXVECTOR3 pos, D3DXVECTOR3 scl, std::istream& is)
 {
 	rotation = rot;
 	position = pos;
@@ -54,7 +52,6 @@ std::istream& Model::Load(ID3D11Device* device, const char* textureFilename, D3D
 	LoadBuffers(device, is);
 	LoadTexture(device, textureFilename);
 	D3DXMatrixIdentity(&m_worldMatrix);
-	return is;
 }
 
 void Model::Shutdown()
@@ -98,7 +95,7 @@ ID3D11ShaderResourceView* Model::GetTexture()
 
 /// This is where we handle creating the vertex and index buffers
 /// Usually you would read in a model and create the buffers from that data file.
-std::ostream& Model::InitializeBuffers(ID3D11Device* device, std::ostream& os)
+void Model::InitializeBuffers(ID3D11Device* device, std::ostream& os)
 {
 	HRESULT result;
 
@@ -131,7 +128,6 @@ std::ostream& Model::InitializeBuffers(ID3D11Device* device, std::ostream& os)
 	delete[]m_model;
 	buffers_init = true;
 	buffers_loaded = true;
-	return os;
 }
 
 void Model::SetupBuffers(ID3D11Device* device, VertexType* vertices, unsigned long* indices)
@@ -172,7 +168,7 @@ void Model::SetupBuffers(ID3D11Device* device, VertexType* vertices, unsigned lo
 	device->CreateBuffer(&indexBufferDesc, &indexData, &m_indexBuffer);
 }
 
-std::istream& Model::LoadBuffers(ID3D11Device* device, std::istream& is)
+void Model::LoadBuffers(ID3D11Device* device, std::istream& is)
 {
 	VertexType* vertices;
 	unsigned long* indices;
@@ -180,7 +176,6 @@ std::istream& Model::LoadBuffers(ID3D11Device* device, std::istream& is)
 	buffers.Read(is, vertices, indices, m_vertexCount, m_indexCount);
 	SetupBuffers(device, vertices, indices);
 	buffers_loaded = true;
-	return is;
 }
 
 void Model::ShutdownBuffers()
@@ -350,15 +345,9 @@ bool Model::SetScale(float x, float y, float z)
 	return true;
 }
 
-D3DXVECTOR3 Model::GetPosition()
-{
-	return position;
-}
-
-D3DXVECTOR3 Model::GetRotation()
-{
-	return start_rot;
-}
+D3DXVECTOR3 Model::GetPosition() { return position; }
+D3DXVECTOR3 Model::GetRotation() { return rotation; }
+D3DXVECTOR3 Model::GetScale() { return scale; }
 
 D3DXMATRIX Model::GetWorldMatrix()
 {
@@ -391,9 +380,6 @@ float Model::GetHeight()
 	return height * scale.y;
 }
 
-std::array<float, 3> Model::GetPos(int ind) { return { (float)m_model[ind].x, (float)m_model[ind].y, (float)m_model[ind].z }; }
-std::array<float, 2> Model::GetTex(int ind) { return { (float)m_model[ind].tu, (float)m_model[ind].tv }; }
-std::array<float, 3> Model::GetNorm(int ind) { return { (float)m_model[ind].nx, (float)m_model[ind].ny, (float)m_model[ind].nz };}
 void Model::DeleteVertexData()
 {
 	delete[] m_model;

@@ -14,11 +14,11 @@ public:
 	Chunk();
 	~Chunk();
 	bool Initialize(ID3D11Device*, int, int, std::ostream&);
-	bool Load(ID3D11Device*, int, int, std::istream&);
-	std::ostream& SetupObjects(ID3D11Device*, int, int, std::ostream&);
-	std::istream& LoadObjects(ID3D11Device*, int, int, std::istream&);
-	void Shutdown();
-	void DeleteChunk();
+	bool Load(ID3D11Device*, int, int, std::istream&, std::istream&);
+	void SetupObjects(ID3D11Device*, int, int, std::ostream&);
+	void LoadObjects(ID3D11Device*, int, int, std::istream&, std::istream&);
+	void Shutdown(std::ostream&);
+	void Delete();
 	void LoadChunk(ID3D11Device*, std::istream&);
 	void Update();
 	void Render(ID3D11DeviceContext*, LightShaderClass*, LightClass*, D3DXMATRIX, D3DXMATRIX);

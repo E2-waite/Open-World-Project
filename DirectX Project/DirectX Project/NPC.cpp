@@ -15,14 +15,16 @@ NPC::~NPC()
 
 }
 
-std::istream& NPC::LoadBuffers(ID3D11Device* device, std::istream& is) 
+void NPC::LoadBuffers(ID3D11Device* device, std::istream& is) 
 { 
 	model->LoadBuffers(device, is); 
-	return is;
 }
 void NPC::ShutdownBuffers() { model->ShutdownBuffers(); }
+void NPC::Shutdown(std::ostream& os)
+{
 
-std::ostream& NPC::Create(ID3D11Device* device, const char* modelFilename, const char* textureFilename, int x, int y, std::ostream& os)
+}
+void NPC::Create(ID3D11Device* device, const char* modelFilename, const char* textureFilename, int x, int y, std::ostream& os)
 {
 	x_offset = x, y_offset = y;
 	model = new Model;
@@ -40,10 +42,9 @@ std::ostream& NPC::Create(ID3D11Device* device, const char* modelFilename, const
 	float distance = sqrt(pow(target_pos.x - start_pos.x, 2) + pow(target_pos.z - start_pos.z, 2));
 	direction = D3DXVECTOR3((target_pos.x - start_pos.x) / distance, 0, (target_pos.z - start_pos.z) / distance);
 	moving = true;
-	return os;
 }
 
-void NPC::Load(ID3D11Device* device, const char* textureFilename, int x, int y, std::istream& is)
+void NPC::Load(ID3D11Device* device, const char* textureFilename, int x, int y, std::istream& is, std::istream& npc_data)
 {
 	x_offset = x, y_offset = y;
 	model = new Model();
