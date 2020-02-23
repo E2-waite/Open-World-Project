@@ -28,6 +28,7 @@ public:
 	void Render(ID3D11DeviceContext*);
 	void Frame();
 	void Move();
+	void FaceDirection();
 	int GetIndexCount();
 	XMMATRIX GetWorldMatrix();
 	ID3D11ShaderResourceView* GetTexture();

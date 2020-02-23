@@ -75,6 +75,7 @@ void NPC::Render(ID3D11DeviceContext* deviceContext)
 void NPC::Frame()
 {
 	Move();
+	FaceDirection();
 }
 
 void NPC::Move()
@@ -96,12 +97,28 @@ void NPC::Move()
 			float distance = sqrt(pow(target_pos.x - start_pos.x, 2) + pow(target_pos.z - start_pos.z, 2));
 			direction = XMFLOAT3((target_pos.x - start_pos.x) / distance, 0, (target_pos.z - start_pos.z) / distance);
 
-			// Sets rotation to facing direction
-			float angle = atan2(direction.x, direction.z);
-			float degrees = 180 * angle / XM_PI;
-			model->Rotation().x = degrees;
+			
 			moving = true;
 		}
+	}
+}
+
+void NPC::FaceDirection()
+{
+	// Sets rotation to facing direction
+	float angle = atan2(direction.x, direction.z);
+	float degrees = 180 * angle / XM_PI;
+
+	bool rotating;
+	bool ascend;
+
+	if (degrees > model->Rotation().x + 5)
+	{
+		model->Rotation().x += 5;
+	}
+	else if (degrees < model->Rotation().x - 5)
+	{
+		model->Rotation().x -= 5;
 	}
 }
 

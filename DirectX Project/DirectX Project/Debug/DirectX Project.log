@@ -19,6 +19,6 @@ D:\Files\University Work\Year 3\AT\Open World Project\DirectX Project\DirectX Pr
 D:\Files\University Work\Year 3\AT\Open World Project\DirectX Project\DirectX Project\NPC.cpp(43,31): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
 D:\Files\University Work\Year 3\AT\Open World Project\DirectX Project\DirectX Project\NPC.cpp(44,31): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
 D:\Files\University Work\Year 3\AT\Open World Project\DirectX Project\DirectX Project\NPC.cpp(55,21): warning C4316: 'Model': object allocated on the heap may not be aligned 16
-D:\Files\University Work\Year 3\AT\Open World Project\DirectX Project\DirectX Project\NPC.cpp(92,17): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
 D:\Files\University Work\Year 3\AT\Open World Project\DirectX Project\DirectX Project\NPC.cpp(93,17): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+D:\Files\University Work\Year 3\AT\Open World Project\DirectX Project\DirectX Project\NPC.cpp(94,17): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
   DirectX Project.vcxproj -> D:\Files\University Work\Year 3\AT\Open World Project\DirectX Project\Debug\OpenWorldProject.exe
