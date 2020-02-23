@@ -25,7 +25,6 @@ using namespace std;
 class Model
 {
 private:
-
 	int curr_index = 0;
 public:
 	Model();
@@ -36,18 +35,13 @@ public:
 	void LoadBuffers(ID3D11Device* device, std::istream&);
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
-	bool SetPos(float, float, float);
-	bool SetRot(float, float, float);
-	bool SetScale(float, float, float);
-	D3DXVECTOR3 GetPosition();
-	D3DXVECTOR3 GetRotation();
-	D3DXVECTOR3 GetScale();
+	D3DXVECTOR3& Position();
+	D3DXVECTOR3& Rotation();
+	D3DXVECTOR3& Scale();
 	void UpdateMatrix();
 	int GetIndexCount();
 	D3DXMATRIX GetWorldMatrix();
 	ID3D11ShaderResourceView* GetTexture();
-	int GetIndCount();
-	float GetHeight();
 	void ShutdownBuffers();
 	void DeleteVertexData();
 private:
@@ -64,14 +58,9 @@ private:
 	TextureClass* m_Texture;
 	ModelType* m_model;
 	D3DXMATRIX m_worldMatrix;
-	float x_rot, y_rot, z_rot;
-	D3DXVECTOR3 start_rot;
 	D3DXVECTOR3 rotation;
-	D3DXVECTOR3 start_pos;
 	D3DXVECTOR3 position;
 	D3DXVECTOR3 scale;
-	int num_polygons;
-	float height = 0;
 	bool buffers_init = false;
 	bool buffers_loaded = false;
 };

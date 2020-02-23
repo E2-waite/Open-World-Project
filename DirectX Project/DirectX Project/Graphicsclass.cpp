@@ -61,6 +61,8 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	// Set the initial position of the camera.
 	m_Camera->SetPosition(25.0f, 50.0f, 25.0f);
 
+
+	player = new Player;
 	// Dynamically set up 2D chunk array
 	chunk = new Chunk*[chunks_x];
 	for (int i = 0; i < chunks_x; ++i)
@@ -78,15 +80,15 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 		ss << "Read num: " << read_num << std::endl;
 		OutputDebugString(ss.str().c_str());
-		if (read_num == num_chunks)
+		if (read_num == num_chunks  && FileExists(transform_file))
 		{
-			// If read file has the same number of chunks as is required, read chunk data
+			// If read file has the same number of chunks as is required (and the NPC data file exists), load objects from binary
 			LoadObjects(bin_read);
 			bin_read.close();
 		}
 		else
 		{
-			// Else create the chunk data and write new binary file
+			// Else create objects from scratch
 			bin_read.close();
 			std::ofstream bin_write(buffer_file, std::ios::trunc | std::ios::binary);
 			bin_write.write((char*)&num_chunks, sizeof(int));
@@ -96,7 +98,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 	else
 	{
-		// If chunk binary file doesn't exist, create one
+		// If chunk binary file doesn't exist, create one and create objects from scratch
 		std::ofstream bin_write(buffer_file, std::ios::trunc | std::ios::binary);
 		bin_write.write((char*)&num_chunks, sizeof(int));
 		InitializeObjects(bin_write);
@@ -166,7 +168,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void GraphicsClass::InitializeObjects(std::ostream& geometry_data)
 {
-	player = new Player;
 	player->Initialize(m_D3D->GetDevice(), geometry_data);
 	for (int i = 0; i < chunks_x; ++i)
 	{
@@ -179,17 +180,16 @@ void GraphicsClass::InitializeObjects(std::ostream& geometry_data)
 
 void GraphicsClass::LoadObjects(std::istream& geometry_data)
 {
-	player = new Player;
-	player->Load(m_D3D->GetDevice(), geometry_data);
-	ifstream npc_data(npc_file, std::ios::binary);
+	ifstream transform_data(transform_file, std::ios::binary);
+	player->Load(m_D3D->GetDevice(), geometry_data, transform_data);
 	for (int i = 0; i < chunks_x; ++i)
 	{
 		for (int j = 0; j < chunks_y; ++j)
 		{
-			chunk[i][j].Load(m_D3D->GetDevice(), i, j, geometry_data, npc_data);
+			chunk[i][j].Load(m_D3D->GetDevice(), i, j, geometry_data, transform_data);
 		}
 	}
-	npc_data.close();
+	transform_data.close();
 }
 
 bool GraphicsClass::FileExists(std::string name)
@@ -210,15 +210,16 @@ void GraphicsClass::DeleteChunks()
 	}
 }
 
-void GraphicsClass::ShutdownChunks()
+void GraphicsClass::ShutdownObjects()
 {
 	// Shutdown chunk (saving NPC data)
-	ofstream npc_data(npc_file, std::ios::binary);
+	ofstream transform_data(transform_file, std::ios::binary);
+	player->Shutdown(transform_data);
 	for (int i = 0; i < chunks_x; ++i)
 	{
 		for (int j = 0; j < chunks_y; ++j)
 		{
-			chunk[i][j].Shutdown(npc_data);
+			chunk[i][j].Shutdown(transform_data);
 		}
 	}
 }
@@ -265,7 +266,7 @@ void GraphicsClass::Shutdown()
 		m_D3D = 0;
 	}
 
-	ShutdownChunks();
+	ShutdownObjects();
 	return;
 }
 
@@ -289,7 +290,7 @@ bool GraphicsClass::Update(int mouse_x, int mouse_y)
 		}
 	}
 
-	player->Update(D3DXVECTOR3(m_Camera->GetPosition().x, 0, m_Camera->GetPosition().z));
+	m_Camera->SetPosition(player->Position().x, m_Camera->GetPosition().y, player->Position().z);
 
 	for (int i = 0; i < chunks_x; ++i)
 	{
@@ -347,7 +348,7 @@ bool GraphicsClass::Render(float rotation)
 	m_D3D->GetWorldMatrix(worldMatrix);
 	m_D3D->GetProjectionMatrix(projectionMatrix);
 	m_D3D->GetOrthoMatrix(orthoMatrix);
-
+	
 	// Render chunks if player is in range
 	for (int i = 0; i < chunks_x; ++i)
 	{
@@ -389,19 +390,15 @@ void GraphicsClass::SetCamPos(float x, float y, float z)
 	m_Camera->SetPosition(x, y, z);
 }
 
-void GraphicsClass::CamPosX(float x)
+void GraphicsClass::MovePlayer(float x, float z)
 {
-	m_Camera->SetPosition(m_Camera->GetPosition().x + x, m_Camera->GetPosition().y, m_Camera->GetPosition().z);
+	player->Position().x += x;
+	player->Position().z += z;
 }
 
 void GraphicsClass::CamPosY(float y)
 {
 	m_Camera->SetPosition(m_Camera->GetPosition().x, m_Camera->GetPosition().y + y, m_Camera->GetPosition().z);
-}
-
-void GraphicsClass::CamPosZ(float z)
-{
-	m_Camera->SetPosition(m_Camera->GetPosition().x, m_Camera->GetPosition().y, m_Camera->GetPosition().z + z);
 }
 
 void GraphicsClass::CamRotY(float x)

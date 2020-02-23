@@ -11,7 +11,6 @@ Model::Model()
 	m_Texture = 0;
 	m_model = 0;
 	position = D3DXVECTOR3(0, 0, 0);
-	x_rot = 0.0; y_rot = 0.0; z_rot = 0.0;
 }
 
 Model::Model(const Model& other)
@@ -27,10 +26,6 @@ void Model::Create(ID3D11Device* device, const char* modelFilename, const char* 
 {
 	bool result;
 
-	start_rot = rot;
-	start_pos = pos;
-	rotation = start_rot;
-	position = start_pos;
 	scale = scl;
 	// Load in the model data.
 	result = LoadModel(modelFilename);
@@ -109,10 +104,6 @@ void Model::InitializeBuffers(ID3D11Device* device, std::ostream& os)
 	// Load the vertex array and index array with data.
 	for (int i = 0; i < m_vertexCount; i++)
 	{
-		if (m_model[i].y > height)
-		{
-			height = m_model[i].y;
-		}
 		vertices[i].position = D3DXVECTOR3(m_model[i].x, m_model[i].y, m_model[i].z);
 		vertices[i].texture = D3DXVECTOR2(m_model[i].tu, m_model[i].tv);
 		vertices[i].normal = D3DXVECTOR3(m_model[i].nx, m_model[i].ny, m_model[i].nz);
@@ -305,8 +296,6 @@ bool Model::LoadModel(const char* filename)
 		fin >> m_model[i].nx >> m_model[i].ny >> m_model[i].nz;
 	}
 
-	fin >> num_polygons;
-
 	fin.close();
 
 	return true;
@@ -323,31 +312,9 @@ void Model::ReleaseModel()
 	return;
 }
 
-bool Model::SetPos(float x, float y, float z)
-{
-	position.x = x;
-	position.y = y;
-	position.z = z;
-	return true;
-}
-
-bool Model::SetRot(float x, float y, float z)
-{
-	rotation.x = x;
-	rotation.y = y;
-	rotation.z = z;
-	return true;
-}
-
-bool Model::SetScale(float x, float y, float z)
-{
-	scale = D3DXVECTOR3(x, y, z);
-	return true;
-}
-
-D3DXVECTOR3 Model::GetPosition() { return position; }
-D3DXVECTOR3 Model::GetRotation() { return rotation; }
-D3DXVECTOR3 Model::GetScale() { return scale; }
+D3DXVECTOR3& Model::Position() { return position; }
+D3DXVECTOR3& Model::Rotation() { return rotation; }
+D3DXVECTOR3& Model::Scale() { return scale; }
 
 D3DXMATRIX Model::GetWorldMatrix()
 {
@@ -368,16 +335,6 @@ void Model::UpdateMatrix()
 	D3DXMatrixScaling(&scaleMatrix, scale.x, scale.y, scale.z);
 
 	m_worldMatrix = scaleMatrix * rotationMatrix * positionMatrix;
-}
-
-int Model::GetIndCount()
-{
-	return m_indexCount;
-}
-
-float Model::GetHeight()
-{
-	return height * scale.y;
 }
 
 void Model::DeleteVertexData()

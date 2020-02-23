@@ -23,7 +23,7 @@ void NPC::ShutdownBuffers() { model->ShutdownBuffers(); }
 void NPC::Shutdown(std::ostream& os)
 {
 	// Writes NPC data when closing the game
-	npcData data(model->GetPosition(), target_pos, model->GetRotation(), model->GetScale());
+	TransformData data(model->Position(), target_pos, model->Rotation(), model->Scale());
 	data.Write(os);
 }
 
@@ -56,7 +56,7 @@ void NPC::Load(ID3D11Device* device, const char* textureFilename, int x, int y, 
 
 	// Read NPC position, target position, rotation and scale from binary file (written when closing previous game instance)
 	D3DXVECTOR3 pos, rot, scl;
-	npcData data;
+	TransformData data;
 	data.Read(npc_data, pos, target_pos, rot, scl);
 	model->Load(device, textureFilename, rot, pos, scl, is);
 	start_pos = pos;
@@ -78,17 +78,18 @@ void NPC::Frame()
 
 void NPC::Move()
 {
-	D3DXVECTOR3 current_dist = D3DXVECTOR3(model->GetPosition().x - target_pos.x, 0, model->GetPosition().z - target_pos.z);
+	D3DXVECTOR3 current_dist = D3DXVECTOR3(model->Position().x - target_pos.x, 0, model->Position().z - target_pos.z);
 	if (moving)
 	{
-		model->SetPos(model->GetPosition().x + (direction.x * speed * elapsed), 0, model->GetPosition().z + (direction.z * speed * elapsed));
+		model->Position().x += (direction.x * speed * elapsed);
+		model->Position().z += (direction.z * speed * elapsed);
 		if (current_dist.x <= 0.5f && current_dist.z <= 0.5f)
 		{
 			moving = false;
 			float rand_x = rand() % chunk_size + 0;
 			float rand_y = rand() % chunk_size + 0;
 			target_pos = D3DXVECTOR3(rand_x + x_offset, 0, rand_y + y_offset);
-			start_pos = model->GetPosition();
+			start_pos = model->Position();
 			float distance = sqrt(pow(target_pos.x - start_pos.x, 2) + pow(target_pos.z - start_pos.z, 2));
 			direction = D3DXVECTOR3((target_pos.x - start_pos.x) / distance, 0, (target_pos.z - start_pos.z) / distance);
 			moving = true;
@@ -109,9 +110,4 @@ D3DXMATRIX NPC::GetWorldMatrix()
 ID3D11ShaderResourceView* NPC::GetTexture()
 {
 	return model->GetTexture();
-}
-
-float NPC::GetHeight()
-{
-	return model->GetHeight();
 }

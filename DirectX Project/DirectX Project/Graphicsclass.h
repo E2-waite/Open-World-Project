@@ -45,14 +45,13 @@ public:
 	GraphicsClass(const GraphicsClass&);
 	~GraphicsClass();
 	void DeleteChunks();
-	void ShutdownChunks();
+	void ShutdownObjects();
 	bool Initialize(int, int, HWND);
 	void Shutdown();
 	bool Update(int,int);
 	void SetCamPos(float, float, float);
-	void CamPosX(float);
+	void MovePlayer(float, float);
 	void CamPosY(float);
-	void CamPosZ(float);
 	void CamRotX(float);
 	void CamRotY(float);
 private:

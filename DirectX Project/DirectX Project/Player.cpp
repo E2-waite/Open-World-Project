@@ -16,20 +16,23 @@ void Player::Initialize(ID3D11Device* device, std::ostream& os)
 	model->Create(device, "Data/Cube.txt", "Data/Player.dds", D3DXVECTOR3(0, 0, 0), D3DXVECTOR3(0, 0, 0), D3DXVECTOR3(1, 1, 1), os);
 }
 
-void Player::Load(ID3D11Device* device, std::istream& is)
+void Player::Load(ID3D11Device* device, std::istream& is, std::istream& t_data)
 {
 	model = new Model;
-	model->Load(device,  "Data/Player.dds", D3DXVECTOR3(0, 0, 0), D3DXVECTOR3(0, 0, 0), D3DXVECTOR3(1, 1, 1), is);
+	D3DXVECTOR3 pos, t_pos, rot, scl;
+	TransformData data;
+	data.Read(t_data, pos, t_pos, rot, scl);
+	model->Load(device,  "Data/Player.dds", rot, pos, scl, is);
 }
 
-void Player::Shutdown()
+void Player::Shutdown(std::ostream& os)
 {
-
+	TransformData data(model->Position(), D3DXVECTOR3(0,0,0), model->Rotation(), model->Scale());
+	data.Write(os);
 }
 
-void Player::Update(D3DXVECTOR3 pos)
+void Player::Update()
 {
-	model->SetPos(pos.x, pos.y, pos.z);
 }
 
 void Player::Render(ID3D11DeviceContext* deviceContext, LightShaderClass* light_shader, LightClass* light, D3DXMATRIX view_matrix, D3DXMATRIX projection_matrix)
@@ -39,7 +42,9 @@ void Player::Render(ID3D11DeviceContext* deviceContext, LightShaderClass* light_
 		projection_matrix, model->GetTexture(), light->GetDirection(), light->GetAmbientColour(), light->GetDiffuseColour());
 }
 
-D3DXVECTOR3 Player::Position()
+D3DXVECTOR3& Player::Position()
 {
-	return model->GetPosition();
+	return model->Position();
 }
+
+

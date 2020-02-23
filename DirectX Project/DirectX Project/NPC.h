@@ -13,7 +13,7 @@ using namespace std;
 #include "Model.h"
 #include "D3dclass.h"
 #include "Consts.h"
-#include "npcData.h"
+#include "TransformData.h"
 class NPC
 {
 public:
@@ -31,7 +31,6 @@ public:
 	int GetIndexCount();
 	D3DXMATRIX GetWorldMatrix();
 	ID3D11ShaderResourceView* GetTexture();
-	float GetHeight();
 private:
 	Model* model;
 	D3DXVECTOR3 start_pos;

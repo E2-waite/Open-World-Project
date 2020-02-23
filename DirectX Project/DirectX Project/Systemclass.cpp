@@ -158,19 +158,19 @@ bool SystemClass::Frame()
 	}
 	if (m_Input->CheckKey(DIK_W))
 	{
-		m_Graphics->CamPosZ(0.5f);
+		m_Graphics->MovePlayer(0, 0.5f);
 	}
 	if (m_Input->CheckKey(DIK_A))
 	{
-		m_Graphics->CamPosX(-0.5f);
+		m_Graphics->MovePlayer(-0.5, 0);
 	}
 	if (m_Input->CheckKey(DIK_S))
 	{
-		m_Graphics->CamPosZ(-0.5f);
+		m_Graphics->MovePlayer(0, -0.5f);
 	}
 	if (m_Input->CheckKey(DIK_D))
 	{
-		m_Graphics->CamPosX(0.5f);
+		m_Graphics->MovePlayer(0.5, 0);
 	}
 	if (m_Input->CheckKey(DIK_SPACE))
 	{

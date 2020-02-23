@@ -139,12 +139,11 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Model.cpp" />
     <ClCompile Include="NPC.cpp" />
-    <ClCompile Include="npcData.cpp" />
     <ClCompile Include="Player.cpp" />
-    <ClCompile Include="PlayerData.cpp" />
     <ClCompile Include="Systemclass.cpp" />
     <ClCompile Include="Textureclass.cpp" />
     <ClCompile Include="Textureshaderclass.cpp" />
+    <ClCompile Include="TransformData.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Bitmapclass.h" />
@@ -168,13 +167,12 @@
     <ClInclude Include="Lightshaderclass.h" />
     <ClInclude Include="Model.h" />
     <ClInclude Include="NPC.h" />
-    <ClInclude Include="npcData.h" />
     <ClInclude Include="Player.h" />
-    <ClInclude Include="PlayerData.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Systemclass.h" />
     <ClInclude Include="Textureclass.h" />
     <ClInclude Include="Textureshaderclass.h" />
+    <ClInclude Include="TransformData.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Light.ps" />

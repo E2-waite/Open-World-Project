@@ -19,7 +19,6 @@ struct ModelType
 
 const int MaxBuffers = 128;
 const int chunk_size = 100;
-const int chunks_x = 2, chunks_y = 2;
+const int chunks_x = 5, chunks_y = 5;
 const std::string buffer_file = "Data/BinaryFiles/Geometry.bin";
-const std::string player_file = "Data/BinaryFiles/Player.bin";
-const std::string npc_file = "Data/BinaryFiles/NPC.bin";
+const std::string transform_file = "Data/BinaryFiles/Transforms.bin";

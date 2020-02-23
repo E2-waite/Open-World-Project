@@ -124,10 +124,10 @@ void Chunk::Render(ID3D11DeviceContext* deviceContext, LightShaderClass* light_s
 
 bool Chunk::CheckRange(D3DXVECTOR3 player_pos)
 {
-	D3DXVECTOR3 top_left = D3DXVECTOR3(floor->GetPosition().x, 0, floor->GetPosition().z);
-	D3DXVECTOR3 top_right = D3DXVECTOR3(floor->GetPosition().x + chunk_size, 0, floor->GetPosition().z);
-	D3DXVECTOR3 btm_left = D3DXVECTOR3(floor->GetPosition().x, 0, floor->GetPosition().z + chunk_size);
-	D3DXVECTOR3 btm_right = D3DXVECTOR3(floor->GetPosition().x + chunk_size, 0, floor->GetPosition().z + chunk_size);
+	D3DXVECTOR3 top_left = D3DXVECTOR3(floor->Position().x, 0, floor->Position().z);
+	D3DXVECTOR3 top_right = D3DXVECTOR3(floor->Position().x + chunk_size, 0, floor->Position().z);
+	D3DXVECTOR3 btm_left = D3DXVECTOR3(floor->Position().x, 0, floor->Position().z + chunk_size);
+	D3DXVECTOR3 btm_right = D3DXVECTOR3(floor->Position().x + chunk_size, 0, floor->Position().z + chunk_size);
 	if (sqrt(pow(player_pos.x - top_left.x, 2) + pow(player_pos.z - top_left.z, 2)) < chunk_size) return true;
 	if (sqrt(pow(player_pos.x - top_right.x, 2) + pow(player_pos.z - top_right.z, 2)) < chunk_size) return true;
 	if (sqrt(pow(player_pos.x - btm_left.x, 2) + pow(player_pos.z - btm_left.z, 2)) < chunk_size) return true;
