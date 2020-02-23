@@ -36,15 +36,15 @@ void NPC::Create(ID3D11Device* device, const char* modelFilename, const char* te
 	// Initialize model in random location within current chunk
 	float rand_x = rand() % chunk_size + 0;
 	float rand_y = rand() % chunk_size + 0;
-	start_pos = D3DXVECTOR3(rand_x + x_offset, 0, rand_y + y_offset);
-	model->Create(device, modelFilename, textureFilename, D3DXVECTOR3(0, 0, 0), start_pos, D3DXVECTOR3(1, 1, 1), os);
+	start_pos = XMFLOAT3(rand_x + x_offset, 0, rand_y + y_offset);
+	model->Create(device, modelFilename, textureFilename, XMFLOAT3(0, 0, 0), start_pos, XMFLOAT3(1, 1, 1), os);
 
 	// Find random movement target within current chunk
 	rand_x = rand() % chunk_size + 0;
 	rand_y = rand() % chunk_size + 0;
-	target_pos = D3DXVECTOR3(rand_x + x_offset, 0, rand_y + y_offset);
+	target_pos = XMFLOAT3(rand_x + x_offset, 0, rand_y + y_offset);
 	float distance = sqrt(pow(target_pos.x - start_pos.x, 2) + pow(target_pos.z - start_pos.z, 2));
-	direction = D3DXVECTOR3((target_pos.x - start_pos.x) / distance, 0, (target_pos.z - start_pos.z) / distance);
+	direction = XMFLOAT3((target_pos.x - start_pos.x) / distance, 0, (target_pos.z - start_pos.z) / distance);
 	moving = true;
 }
 
@@ -55,14 +55,14 @@ void NPC::Load(ID3D11Device* device, const char* textureFilename, int x, int y, 
 	model = new Model();
 
 	// Read NPC position, target position, rotation and scale from binary file (written when closing previous game instance)
-	D3DXVECTOR3 pos, rot, scl;
+	XMFLOAT3 pos, rot, scl;
 	TransformData data;
 	data.Read(npc_data, pos, target_pos, rot, scl);
 	model->Load(device, textureFilename, rot, pos, scl, is);
 	start_pos = pos;
 
 	float distance = sqrt(pow(target_pos.x - start_pos.x, 2) + pow(target_pos.z - start_pos.z, 2));
-	direction = D3DXVECTOR3((target_pos.x - start_pos.x) / distance, 0, (target_pos.z - start_pos.z) / distance);
+	direction = XMFLOAT3((target_pos.x - start_pos.x) / distance, 0, (target_pos.z - start_pos.z) / distance);
 	moving = true;
 }
 
@@ -78,7 +78,7 @@ void NPC::Frame()
 
 void NPC::Move()
 {
-	D3DXVECTOR3 current_dist = D3DXVECTOR3(model->Position().x - target_pos.x, 0, model->Position().z - target_pos.z);
+	XMFLOAT3 current_dist = XMFLOAT3(model->Position().x - target_pos.x, 0, model->Position().z - target_pos.z);
 	if (moving)
 	{
 		model->Position().x += (direction.x * speed * elapsed);
@@ -88,10 +88,10 @@ void NPC::Move()
 			moving = false;
 			float rand_x = rand() % chunk_size + 0;
 			float rand_y = rand() % chunk_size + 0;
-			target_pos = D3DXVECTOR3(rand_x + x_offset, 0, rand_y + y_offset);
+			target_pos = XMFLOAT3(rand_x + x_offset, 0, rand_y + y_offset);
 			start_pos = model->Position();
 			float distance = sqrt(pow(target_pos.x - start_pos.x, 2) + pow(target_pos.z - start_pos.z, 2));
-			direction = D3DXVECTOR3((target_pos.x - start_pos.x) / distance, 0, (target_pos.z - start_pos.z) / distance);
+			direction = XMFLOAT3((target_pos.x - start_pos.x) / distance, 0, (target_pos.z - start_pos.z) / distance);
 			moving = true;
 		}
 	}
@@ -102,7 +102,7 @@ int NPC::GetIndexCount()
 	return model->GetIndexCount();
 }
 
-D3DXMATRIX NPC::GetWorldMatrix()
+XMMATRIX NPC::GetWorldMatrix()
 {
 	return model->GetWorldMatrix();
 }

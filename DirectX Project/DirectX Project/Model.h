@@ -10,15 +10,15 @@
 //////////////
 #include <d3d11.h>
 #include <DirectXMath.h>
-#include <d3dx10math.h>
 #include <fstream>
 #include <array>
 #include <string>
 #include <sstream>
-using namespace std;
 #include "Textureclass.h"
 #include "Consts.h"
 #include "BufferData.h"
+
+using namespace DirectX;
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: Model
 ////////////////////////////////////////////////////////////////////////////////
@@ -30,17 +30,17 @@ public:
 	Model();
 	Model(const Model&);
 	~Model();
-	void Create(ID3D11Device*, const char*, const char*, D3DXVECTOR3 rot, D3DXVECTOR3 pos, D3DXVECTOR3 scl, std::ostream&);
-	void Load(ID3D11Device*, const char*, D3DXVECTOR3 rot, D3DXVECTOR3 pos, D3DXVECTOR3 scl, std::istream&);
+	void Create(ID3D11Device*, const char*, const char*, XMFLOAT3 rot, XMFLOAT3 pos, XMFLOAT3 scl, std::ostream&);
+	void Load(ID3D11Device*, const char*, XMFLOAT3 rot, XMFLOAT3 pos, XMFLOAT3 scl, std::istream&);
 	void LoadBuffers(ID3D11Device* device, std::istream&);
 	void Shutdown();
 	void Render(ID3D11DeviceContext*);
-	D3DXVECTOR3& Position();
-	D3DXVECTOR3& Rotation();
-	D3DXVECTOR3& Scale();
+	XMFLOAT3& Position();
+	XMFLOAT3& Rotation();
+	XMFLOAT3& Scale();
 	void UpdateMatrix();
 	int GetIndexCount();
-	D3DXMATRIX GetWorldMatrix();
+	XMMATRIX GetWorldMatrix();
 	ID3D11ShaderResourceView* GetTexture();
 	void ShutdownBuffers();
 	void DeleteVertexData();
@@ -57,10 +57,10 @@ private:
 	int m_vertexCount, m_indexCount;
 	TextureClass* m_Texture;
 	ModelType* m_model;
-	D3DXMATRIX m_worldMatrix;
-	D3DXVECTOR3 rotation;
-	D3DXVECTOR3 position;
-	D3DXVECTOR3 scale;
+	XMMATRIX m_worldMatrix;
+	XMFLOAT3 rotation;
+	XMFLOAT3 position;
+	XMFLOAT3 scale;
 	bool buffers_init = false;
 	bool buffers_loaded = false;
 };

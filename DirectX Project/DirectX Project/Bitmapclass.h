@@ -1,9 +1,8 @@
 #ifndef _BITMAPCLASS_H_
 #define _BITMAPCLASS_H_
 
-#include <d3d11.h>
-#include <d3dx10math.h>
-
+#include <DirectXMath.h>
+using namespace DirectX;
 #include "textureclass.h"
 
 
@@ -12,8 +11,8 @@ class BitmapClass
 private:
 	struct VertexType
 	{
-		D3DXVECTOR3 position;
-		D3DXVECTOR2 texture;
+		XMFLOAT3 position;
+		XMFLOAT2 texture;
 	};
 
 public:

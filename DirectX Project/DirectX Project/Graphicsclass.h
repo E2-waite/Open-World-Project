@@ -13,6 +13,8 @@
 #include <time.h>
 #include <iostream>
 #include <fstream>
+#include <DirectXMath.h>
+using namespace DirectX;
 #include "d3dclass.h"
 #include "cameraclass.h"
 #include "Lightshaderclass.h"
@@ -22,11 +24,8 @@
 #include "NPC.h"
 #include "Chunk.h"
 #include "Player.h"
-#include "imconfig.h"
-#include "IMGUI\\imgui.h"
-#include "IMGUI\\imgui_impl_win32.h"
-#include "IMGUI\\imgui_impl_dx11.h"
 #include "Consts.h"
+
 /////////////
 // GLOBALS //
 /////////////

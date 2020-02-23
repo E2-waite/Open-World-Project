@@ -1,6 +1,8 @@
 #pragma once
 #include <d3d11.h>
 #include <fstream>
+#include <DirectXMath.h>
+using namespace DirectX;
 #include "Lightshaderclass.h"
 #include "Lightclass.h"
 #include "Textureclass.h"
@@ -15,9 +17,9 @@ public:
 	void Initialize(ID3D11Device*, std::ostream&);
 	void Load(ID3D11Device*, std::istream&, std::istream&);
 	void Shutdown(std::ostream&);
-	void Render(ID3D11DeviceContext*, LightShaderClass* light_shader, LightClass* light, D3DXMATRIX view_matrix, D3DXMATRIX projection_matrix);
+	void Render(ID3D11DeviceContext*, LightShaderClass* light_shader, LightClass* light, XMMATRIX view_matrix, XMMATRIX projection_matrix);
 	void Update();
-	D3DXVECTOR3& Position();
+	XMFLOAT3& Position();
 private:
 	Model* model;
 };

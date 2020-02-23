@@ -1,6 +1,6 @@
 #include "TransformData.h"
 
-TransformData::TransformData(D3DXVECTOR3 position, D3DXVECTOR3 target_pos, D3DXVECTOR3 rotation, D3DXVECTOR3 scale) : position(position), target_pos(target_pos), rotation(rotation), scale(scale) {}
+TransformData::TransformData(XMFLOAT3 position, XMFLOAT3 target_pos, XMFLOAT3 rotation, XMFLOAT3 scale) : position(position), target_pos(target_pos), rotation(rotation), scale(scale) {}
 TransformData::TransformData() {}
 TransformData::~TransformData() {}
 
@@ -20,7 +20,7 @@ void TransformData::Write(std::ostream& os)
 	os.write((char*)&scale.z, sizeof(float));
 }
 
-void TransformData::Read(std::istream& is, D3DXVECTOR3& pos, D3DXVECTOR3& t_pos, D3DXVECTOR3& rot, D3DXVECTOR3& scl)
+void TransformData::Read(std::istream& is, XMFLOAT3& pos, XMFLOAT3& t_pos, XMFLOAT3& rot, XMFLOAT3& scl)
 {
 	is.read((char*)&pos.x, sizeof(float));
 	is.read((char*)&pos.y, sizeof(float));

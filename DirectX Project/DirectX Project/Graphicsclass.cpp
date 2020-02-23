@@ -42,15 +42,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		MessageBox(hwnd, "Could not initialize Direct3D", "Error", MB_OK);
 	}
 
-	// Setup ImGUI
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO();
-	ImGui_ImplWin32_Init(hwnd);
-	ImGui_ImplDX11_Init(m_D3D->GetDevice(), m_D3D->GetDeviceContext());
-	ImGui::StyleColorsDark();
-
-
 	// Create the camera object.
 	m_Camera = new CameraClass;
 	if (!m_Camera)
@@ -226,7 +217,6 @@ void GraphicsClass::ShutdownObjects()
 
 void GraphicsClass::Shutdown()
 {
-	ImGui_ImplDX11_Shutdown();
 
 	// Release the light object.
 	if (m_Light)
@@ -276,7 +266,7 @@ bool GraphicsClass::Update(int mouse_x, int mouse_y)
 	bool result;
 	static float rotation = 0.0f;
 	// UPdate the rotation variable each frame.
-	rotation += (float)D3DX_PI * 0.005f;
+	rotation += (float)XM_PI * 0.005f;
 	if (rotation > 360.0f)
 	{
 		rotation -= 360.0f;
@@ -327,8 +317,8 @@ bool GraphicsClass::Update(int mouse_x, int mouse_y)
 
 bool GraphicsClass::Render(float rotation)
 {
-	D3DXMATRIX viewMatrix, projectionMatrix, worldMatrix, orthoMatrix, rotMatrix;
-	D3DXVECTOR3 cam_rotation;
+	XMMATRIX viewMatrix, projectionMatrix, worldMatrix, orthoMatrix, rotMatrix;
+	XMFLOAT3 cam_rotation;
 	bool result;
 	float yaw, pitch, roll;
 	cam_rotation = m_Camera->GetRotation();
@@ -338,11 +328,11 @@ bool GraphicsClass::Render(float rotation)
 	yaw = cam_rotation.y * 0.0174532925f;
 	roll = cam_rotation.z * 0.0174532925f;
 
-	D3DXMatrixRotationYawPitchRoll(&rotMatrix, yaw, pitch, roll);
+	rotMatrix = XMMatrixRotationRollPitchYaw(yaw, pitch, roll);
 
 	m_D3D->BeginScene(0.1f, 0.1f, 0.1f, 1.0f);
 
-	m_Camera->Render();
+	m_Camera->Render(player->Position());
 
 	m_Camera->GetViewMatrix(viewMatrix);
 	m_D3D->GetWorldMatrix(worldMatrix);
@@ -408,5 +398,5 @@ void GraphicsClass::CamRotY(float x)
 
 void GraphicsClass::CamRotX(float y)
 {
-	m_Camera->SetRotation(m_Camera->GetRotation().x, m_Camera->GetRotation().y + y, m_Camera->GetRotation().z);
+	m_Camera->SetRotation(m_Camera->GetRotation().x, m_Camera->GetRotation().y, m_Camera->GetRotation().z + y);
 }

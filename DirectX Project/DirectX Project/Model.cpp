@@ -10,7 +10,7 @@ Model::Model()
 	m_indexBuffer = 0;
 	m_Texture = 0;
 	m_model = 0;
-	position = D3DXVECTOR3(0, 0, 0);
+	position = XMFLOAT3(0, 0, 0);
 }
 
 Model::Model(const Model& other)
@@ -22,7 +22,7 @@ Model::~Model()
 }
  
 /// The Initialize function will call the initialization functions for the vertex and index buffers. 
-void Model::Create(ID3D11Device* device, const char* modelFilename, const char* textureFilename, D3DXVECTOR3 rot, D3DXVECTOR3 pos, D3DXVECTOR3 scl, std::ostream& os)
+void Model::Create(ID3D11Device* device, const char* modelFilename, const char* textureFilename, XMFLOAT3 rot, XMFLOAT3 pos, XMFLOAT3 scl, std::ostream& os)
 {
 	bool result;
 
@@ -36,17 +36,17 @@ void Model::Create(ID3D11Device* device, const char* modelFilename, const char* 
 	// Load the texture for this model.
 	result = LoadTexture(device, textureFilename);
 
-	D3DXMatrixIdentity(&m_worldMatrix);
+	XMMatrixIdentity() = m_worldMatrix;
 }
 
-void Model::Load(ID3D11Device* device, const char* textureFilename, D3DXVECTOR3 rot, D3DXVECTOR3 pos, D3DXVECTOR3 scl, std::istream& is)
+void Model::Load(ID3D11Device* device, const char* textureFilename, XMFLOAT3 rot, XMFLOAT3 pos, XMFLOAT3 scl, std::istream& is)
 {
 	rotation = rot;
 	position = pos;
 	scale = scl;
 	LoadBuffers(device, is);
 	LoadTexture(device, textureFilename);
-	D3DXMatrixIdentity(&m_worldMatrix);
+	XMMatrixIdentity() = m_worldMatrix;
 }
 
 void Model::Shutdown()
@@ -104,9 +104,9 @@ void Model::InitializeBuffers(ID3D11Device* device, std::ostream& os)
 	// Load the vertex array and index array with data.
 	for (int i = 0; i < m_vertexCount; i++)
 	{
-		vertices[i].position = D3DXVECTOR3(m_model[i].x, m_model[i].y, m_model[i].z);
-		vertices[i].texture = D3DXVECTOR2(m_model[i].tu, m_model[i].tv);
-		vertices[i].normal = D3DXVECTOR3(m_model[i].nx, m_model[i].ny, m_model[i].nz);
+		vertices[i].position = XMFLOAT3(m_model[i].x, m_model[i].y, m_model[i].z);
+		vertices[i].texture = XMFLOAT2(m_model[i].tu, m_model[i].tv);
+		vertices[i].normal = XMFLOAT3(m_model[i].nx, m_model[i].ny, m_model[i].nz);
 		indices[i] = i;
 	}
 
@@ -245,7 +245,7 @@ void Model::ReleaseTexture()
 
 bool Model::LoadModel(const char* filename)
 {
-	ifstream fin;
+	std::ifstream fin;
 	char input;
 	int i;
 
@@ -312,11 +312,11 @@ void Model::ReleaseModel()
 	return;
 }
 
-D3DXVECTOR3& Model::Position() { return position; }
-D3DXVECTOR3& Model::Rotation() { return rotation; }
-D3DXVECTOR3& Model::Scale() { return scale; }
+XMFLOAT3& Model::Position() { return position; }
+XMFLOAT3& Model::Rotation() { return rotation; }
+XMFLOAT3& Model::Scale() { return scale; }
 
-D3DXMATRIX Model::GetWorldMatrix()
+XMMATRIX Model::GetWorldMatrix()
 {
 	return m_worldMatrix;
 }
@@ -324,15 +324,15 @@ D3DXMATRIX Model::GetWorldMatrix()
 void Model::UpdateMatrix()
 {
 	float yaw, pitch, roll;
-	D3DXMATRIX rotationMatrix, positionMatrix, scaleMatrix;
+	XMMATRIX rotationMatrix, positionMatrix, scaleMatrix;
 
 	pitch = rotation.x * 0.0174532925f;
 	yaw = rotation.y * 0.0174532925f;
 	roll = rotation.z * 0.0174532925f;
 
-	D3DXMatrixRotationYawPitchRoll(&rotationMatrix, yaw, pitch, roll);
-	D3DXMatrixTranslation(&positionMatrix, position.x, position.y, position.z);
-	D3DXMatrixScaling(&scaleMatrix, scale.x, scale.y, scale.z);
+	rotationMatrix = XMMatrixRotationRollPitchYaw(roll, pitch, yaw);
+	positionMatrix = XMMatrixTranslation(position.x, position.y, position.z);
+	scaleMatrix = XMMatrixScaling(scale.x, scale.y, scale.z);
 
 	m_worldMatrix = scaleMatrix * rotationMatrix * positionMatrix;
 }

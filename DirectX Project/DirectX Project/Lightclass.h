@@ -7,7 +7,8 @@
 //////////////
 // INCLUDES //
 //////////////
-#include <d3dx10math.h>
+#include <DirectXMath.h>
+using namespace DirectX;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: LightClass
@@ -23,14 +24,14 @@ public:
 	void SetDiffuseColour(float, float, float, float);
 	void SetDirection(float, float, float);
 
-	D3DXVECTOR4 GetAmbientColour();
-	D3DXVECTOR4 GetDiffuseColour();
-	D3DXVECTOR3 GetDirection();
+	XMFLOAT4 GetAmbientColour();
+	XMFLOAT4 GetDiffuseColour();
+	XMFLOAT3 GetDirection();
 
 private:
-	D3DXVECTOR4 m_ambientColour;
-	D3DXVECTOR4 m_diffuseColour;
-	D3DXVECTOR3 m_direction;
+	XMFLOAT4 m_ambientColour;
+	XMFLOAT4 m_diffuseColour;
+	XMFLOAT3 m_direction;
 };
 
 #endif

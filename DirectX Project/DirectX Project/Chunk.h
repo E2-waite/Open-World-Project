@@ -2,12 +2,13 @@
 
 #include <iostream>  
 #include <string>  
+#include <DirectXMath.h>
 #include "Model.h"
 #include "NPC.h"
 #include "Lightshaderclass.h"
 #include "Lightclass.h"
 #include "Consts.h"
-
+using namespace DirectX;
 class Chunk
 {
 public:
@@ -21,8 +22,8 @@ public:
 	void Delete();
 	void LoadChunk(ID3D11Device*, std::istream&);
 	void Update();
-	void Render(ID3D11DeviceContext*, LightShaderClass*, LightClass*, D3DXMATRIX, D3DXMATRIX);
-	bool CheckRange(D3DXVECTOR3);
+	void Render(ID3D11DeviceContext*, LightShaderClass*, LightClass*, XMMATRIX, XMMATRIX);
+	bool CheckRange(XMFLOAT3);
 	bool Loaded();
 private:
 	Model* floor;

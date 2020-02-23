@@ -4,8 +4,8 @@
 #include <time.h>
 #include <d3d11.h>
 #include <DirectXMath.h>
-#include <d3dx10math.h>
 #include <fstream>
+using namespace DirectX;
 using namespace std;
 #include "Lightshaderclass.h"
 #include "Lightclass.h"
@@ -29,13 +29,13 @@ public:
 	void Frame();
 	void Move();
 	int GetIndexCount();
-	D3DXMATRIX GetWorldMatrix();
+	XMMATRIX GetWorldMatrix();
 	ID3D11ShaderResourceView* GetTexture();
 private:
 	Model* model;
-	D3DXVECTOR3 start_pos;
-	D3DXVECTOR3 target_pos;
-	D3DXVECTOR3 direction;
+	XMFLOAT3 start_pos;
+	XMFLOAT3 target_pos;
+	XMFLOAT3 direction;
 	float distance;
 	float speed = 5;
 	float elapsed = 0.01f;

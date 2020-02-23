@@ -12,7 +12,8 @@
 //////////////
 #include <d3d11.h>
 #include <d3dx11tex.h>
-
+#include <DirectXMath.h>
+using namespace DirectX;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: TextureClass

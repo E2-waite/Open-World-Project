@@ -1,19 +1,19 @@
 #pragma once
 #include <fstream>
-#include <d3dx10math.h>
-
+#include <DirectXMath.h>
+using namespace DirectX;
 class TransformData
 {
 public:
-	TransformData(D3DXVECTOR3, D3DXVECTOR3, D3DXVECTOR3, D3DXVECTOR3);
+	TransformData(XMFLOAT3, XMFLOAT3, XMFLOAT3, XMFLOAT3);
 	TransformData();
 	~TransformData();
 	void Write(std::ostream&);
-	void Read(std::istream&, D3DXVECTOR3&, D3DXVECTOR3&, D3DXVECTOR3&, D3DXVECTOR3&);
+	void Read(std::istream&, XMFLOAT3&, XMFLOAT3&, XMFLOAT3&, XMFLOAT3&);
 private:
-	D3DXVECTOR3 position;
-	D3DXVECTOR3 target_pos;
-	D3DXVECTOR3 rotation;
-	D3DXVECTOR3 scale;
+	XMFLOAT3 position;
+	XMFLOAT3 target_pos;
+	XMFLOAT3 rotation;
+	XMFLOAT3 scale;
 };
 
