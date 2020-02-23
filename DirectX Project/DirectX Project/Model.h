@@ -44,6 +44,7 @@ public:
 	ID3D11ShaderResourceView* GetTexture();
 	void ShutdownBuffers();
 	void DeleteVertexData();
+	void LookAt(XMFLOAT3);
 private:
 	void InitializeBuffers(ID3D11Device*, std::ostream&);
 	void RenderBuffers(ID3D11DeviceContext*);
@@ -57,12 +58,13 @@ private:
 	int m_vertexCount, m_indexCount;
 	TextureClass* m_Texture;
 	ModelType* m_model;
-	XMMATRIX m_worldMatrix;
+	XMMATRIX m_worldMatrix, look_matrix;
 	XMFLOAT3 rotation;
 	XMFLOAT3 position;
 	XMFLOAT3 scale;
 	bool buffers_init = false;
 	bool buffers_loaded = false;
+	bool looking_at = false;
 };
 
 #endif

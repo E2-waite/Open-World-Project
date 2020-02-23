@@ -29,7 +29,6 @@ void NPC::Shutdown(std::ostream& os)
 
 void NPC::Create(ID3D11Device* device, const char* modelFilename, const char* textureFilename, int x, int y, std::ostream& os)
 {
-
 	// Create new NPC from scratch
 	x_offset = x, y_offset = y;
 	model = new Model;
@@ -38,9 +37,6 @@ void NPC::Create(ID3D11Device* device, const char* modelFilename, const char* te
 	float rand_x = rand() % chunk_size + 0;
 	float rand_y = rand() % chunk_size + 0;
 	start_pos = XMFLOAT3(rand_x + x_offset, 0, rand_y + y_offset);
-	stringstream ss;
-	ss << "Start Pos: x" << start_pos.x << " y" << start_pos.z <<  std::endl;
-	OutputDebugString(ss.str().c_str());
 	model->Create(device, modelFilename, textureFilename, XMFLOAT3(0, 0, 0), start_pos, XMFLOAT3(1, 1, 1), os);
 
 	// Find random movement target within current chunk
@@ -54,10 +50,6 @@ void NPC::Create(ID3D11Device* device, const char* modelFilename, const char* te
 
 void NPC::Load(ID3D11Device* device, const char* textureFilename, int x, int y, std::istream& is, std::istream& npc_data)
 { 
-
-	stringstream ss;
-	ss << "LOADING" << std::endl;
-	OutputDebugString(ss.str().c_str());
 	// Setup NPC from loaded geometry and position data from binary files
 	x_offset = x, y_offset = y;
 	model = new Model();
@@ -77,6 +69,7 @@ void NPC::Load(ID3D11Device* device, const char* textureFilename, int x, int y, 
 void NPC::Render(ID3D11DeviceContext* deviceContext)
 {
 	model->Render(deviceContext);
+
 }
 
 void NPC::Frame()
@@ -91,6 +84,8 @@ void NPC::Move()
 	{
 		model->Position().x += (direction.x * speed * elapsed);
 		model->Position().z += (direction.z * speed * elapsed);
+		//model->LookAt(target_pos);
+		
 		if (current_dist.x <= 0.5f && current_dist.z <= 0.5f)
 		{
 			moving = false;
@@ -100,6 +95,11 @@ void NPC::Move()
 			start_pos = model->Position();
 			float distance = sqrt(pow(target_pos.x - start_pos.x, 2) + pow(target_pos.z - start_pos.z, 2));
 			direction = XMFLOAT3((target_pos.x - start_pos.x) / distance, 0, (target_pos.z - start_pos.z) / distance);
+
+			// Sets rotation to facing direction
+			float angle = atan2(direction.x, direction.z);
+			float degrees = 180 * angle / XM_PI;
+			model->Rotation().x = degrees;
 			moving = true;
 		}
 	}

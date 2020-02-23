@@ -1,5 +1,5 @@
 ﻿C:\Program Files\VisualStudio\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(459,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (DirectX Project.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  Model.cpp
+  NPC.cpp
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared\dxgi.h(44,30): warning C4091: 'typedef ': ignored on left of 'IDXGIObject' when no variable is declared
 C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include\d3d11.h(917,1): warning C4005: 'D3D11_ERROR_TOO_MANY_UNIQUE_STATE_OBJECTS': macro redefinition
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared\winerror.h(56303): message : see previous definition of 'D3D11_ERROR_TOO_MANY_UNIQUE_STATE_OBJECTS'
@@ -13,6 +13,12 @@ C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include\d3d10.h(608,1):
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared\winerror.h(56279): message : see previous definition of 'D3D10_ERROR_TOO_MANY_UNIQUE_STATE_OBJECTS'
 C:\Program Files (x86)\Microsoft DirectX SDK (June 2010)\Include\d3d10.h(609,1): warning C4005: 'D3D10_ERROR_FILE_NOT_FOUND': macro redefinition
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.18362.0\shared\winerror.h(56288): message : see previous definition of 'D3D10_ERROR_FILE_NOT_FOUND'
-D:\Files\University Work\Year 3\AT\Open World Project\DirectX Project\DirectX Project\Model.cpp(96,10): warning C4101: 'result': unreferenced local variable
-D:\Files\University Work\Year 3\AT\Open World Project\DirectX Project\DirectX Project\Model.cpp(251,6): warning C4101: 'i': unreferenced local variable
+D:\Files\University Work\Year 3\AT\Open World Project\DirectX Project\DirectX Project\NPC.cpp(34,19): warning C4316: 'Model': object allocated on the heap may not be aligned 16
+D:\Files\University Work\Year 3\AT\Open World Project\DirectX Project\DirectX Project\NPC.cpp(37,15): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+D:\Files\University Work\Year 3\AT\Open World Project\DirectX Project\DirectX Project\NPC.cpp(38,15): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+D:\Files\University Work\Year 3\AT\Open World Project\DirectX Project\DirectX Project\NPC.cpp(43,31): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\Files\University Work\Year 3\AT\Open World Project\DirectX Project\DirectX Project\NPC.cpp(44,31): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\Files\University Work\Year 3\AT\Open World Project\DirectX Project\DirectX Project\NPC.cpp(55,21): warning C4316: 'Model': object allocated on the heap may not be aligned 16
+D:\Files\University Work\Year 3\AT\Open World Project\DirectX Project\DirectX Project\NPC.cpp(92,17): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
+D:\Files\University Work\Year 3\AT\Open World Project\DirectX Project\DirectX Project\NPC.cpp(93,17): warning C4244: 'initializing': conversion from 'int' to 'float', possible loss of data
   DirectX Project.vcxproj -> D:\Files\University Work\Year 3\AT\Open World Project\DirectX Project\Debug\OpenWorldProject.exe

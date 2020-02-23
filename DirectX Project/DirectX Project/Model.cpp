@@ -114,7 +114,6 @@ void Model::InitializeBuffers(ID3D11Device* device, std::ostream& os)
 	BufferData buffers(vertices, indices, m_vertexCount, m_indexCount);
 	buffers.Write(os);
 	SetupBuffers(device, vertices, indices);
-
 	delete[]vertices;
 	delete[]indices;
 	delete[]m_model;
@@ -336,6 +335,23 @@ void Model::UpdateMatrix()
 	scaleMatrix = XMMatrixScaling(scale.x, scale.y, scale.z);
 
 	m_worldMatrix = scaleMatrix * rotationMatrix * positionMatrix;
+}
+
+void Model::LookAt(XMFLOAT3 look_pos)
+{
+	XMFLOAT3 up_f(0.0f, 1.0f, 0.0f);
+	XMVECTOR up, pos, look_at;
+	up = XMLoadFloat3(&up_f);
+	pos = XMLoadFloat3(&position);
+	look_at = XMLoadFloat3(&look_pos) - pos;
+
+	look_matrix = XMMatrixRotationRollPitchYaw(1, 1, 1);
+	look_at = XMVector3TransformCoord(look_at, look_matrix);
+	up = XMVector3TransformCoord(up, look_matrix);
+
+	look_at = pos + look_at;
+
+	look_matrix = XMMatrixLookAtLH(pos, look_at, up);
 }
 
 void Model::DeleteVertexData()
