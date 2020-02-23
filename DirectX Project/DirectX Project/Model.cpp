@@ -25,7 +25,8 @@ Model::~Model()
 void Model::Create(ID3D11Device* device, const char* modelFilename, const char* textureFilename, XMFLOAT3 rot, XMFLOAT3 pos, XMFLOAT3 scl, std::ostream& os)
 {
 	bool result;
-
+	rotation = rot;
+	position = pos;
 	scale = scl;
 	// Load in the model data.
 	result = LoadModel(modelFilename);

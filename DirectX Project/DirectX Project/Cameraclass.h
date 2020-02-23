@@ -28,7 +28,7 @@ public:
 	XMFLOAT3 GetPosition();
 	XMFLOAT3 GetRotation();
 
-	void Render(XMFLOAT3);
+	void Render(XMVECTOR);
 	void GetViewMatrix(XMMATRIX&);
 
 private:

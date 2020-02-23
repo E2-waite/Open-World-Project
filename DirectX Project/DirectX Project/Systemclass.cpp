@@ -182,19 +182,11 @@ bool SystemClass::Frame()
 	}
 	if (m_Input->CheckKey(DIK_E))
 	{
-		m_Graphics->CamRotX(1.5f);
+		m_Graphics->CamRotY(1.5f);
 	}
 	if (m_Input->CheckKey(DIK_Q))
 	{
-		m_Graphics->CamRotX(-1.5f);
-	}
-	if (m_Input->CheckKey(DIK_R))
-	{
 		m_Graphics->CamRotY(-1.5f);
-	}
-	if (m_Input->CheckKey(DIK_F))
-	{
-		m_Graphics->CamRotY(1.5f);
 	}
 
 

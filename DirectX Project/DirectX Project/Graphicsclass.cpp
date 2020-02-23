@@ -50,7 +50,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	}
 
 	// Set the initial position of the camera.
-	m_Camera->SetPosition(25.0f, 50.0f, 25.0f);
+	m_Camera->SetPosition(0, 100.0f, 0);
 
 
 	player = new Player;
@@ -332,7 +332,7 @@ bool GraphicsClass::Render(float rotation)
 
 	m_D3D->BeginScene(0.1f, 0.1f, 0.1f, 1.0f);
 
-	m_Camera->Render(player->Position());
+	m_Camera->Render(XMLoadFloat3(&player->Position()));
 
 	m_Camera->GetViewMatrix(viewMatrix);
 	m_D3D->GetWorldMatrix(worldMatrix);
@@ -388,7 +388,10 @@ void GraphicsClass::MovePlayer(float x, float z)
 
 void GraphicsClass::CamPosY(float y)
 {
-	m_Camera->SetPosition(m_Camera->GetPosition().x, m_Camera->GetPosition().y + y, m_Camera->GetPosition().z);
+	if ((y > 0 && m_Camera->GetPosition().y < 120) || (y < 0 && m_Camera->GetPosition().y > 40))
+	{
+		m_Camera->SetPosition(m_Camera->GetPosition().x, m_Camera->GetPosition().y + y, m_Camera->GetPosition().z);
+	}
 }
 
 void GraphicsClass::CamRotY(float x)

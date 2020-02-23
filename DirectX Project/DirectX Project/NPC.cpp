@@ -29,6 +29,7 @@ void NPC::Shutdown(std::ostream& os)
 
 void NPC::Create(ID3D11Device* device, const char* modelFilename, const char* textureFilename, int x, int y, std::ostream& os)
 {
+
 	// Create new NPC from scratch
 	x_offset = x, y_offset = y;
 	model = new Model;
@@ -37,6 +38,9 @@ void NPC::Create(ID3D11Device* device, const char* modelFilename, const char* te
 	float rand_x = rand() % chunk_size + 0;
 	float rand_y = rand() % chunk_size + 0;
 	start_pos = XMFLOAT3(rand_x + x_offset, 0, rand_y + y_offset);
+	stringstream ss;
+	ss << "Start Pos: x" << start_pos.x << " y" << start_pos.z <<  std::endl;
+	OutputDebugString(ss.str().c_str());
 	model->Create(device, modelFilename, textureFilename, XMFLOAT3(0, 0, 0), start_pos, XMFLOAT3(1, 1, 1), os);
 
 	// Find random movement target within current chunk
@@ -50,6 +54,10 @@ void NPC::Create(ID3D11Device* device, const char* modelFilename, const char* te
 
 void NPC::Load(ID3D11Device* device, const char* textureFilename, int x, int y, std::istream& is, std::istream& npc_data)
 { 
+
+	stringstream ss;
+	ss << "LOADING" << std::endl;
+	OutputDebugString(ss.str().c_str());
 	// Setup NPC from loaded geometry and position data from binary files
 	x_offset = x, y_offset = y;
 	model = new Model();
