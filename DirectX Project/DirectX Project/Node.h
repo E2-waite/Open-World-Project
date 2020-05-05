@@ -8,16 +8,13 @@ public:
 	Node();
 	~Node();
 	XMINT2& Pos();
-	bool Pathable();
-	Node* Clone() const { return new Node(*this); };
+	XMINT2& Parent();
 	int& GCost();
 	int& HCost();
 	int FCost();
-	void SetParent(Node node);
-	Node GetParent();
+
 private:
-	XMINT2 position = XMINT2(0, 0);
-	bool filled = false;
+	XMINT2 position;
+	XMINT2 parent = XMINT2(0,0);
 	int g_cost = 0, h_cost = 0, f_cost = 0;
-	Node* parent;
 };

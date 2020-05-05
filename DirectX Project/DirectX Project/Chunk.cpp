@@ -33,7 +33,7 @@ void Chunk::SetupObjects(ID3D11Device* device, int x, int y, std::ostream& geome
 	pos[0] = x, pos[1] = y;
 	floor = new Model;
 	floor->Create(device, "Data/Floor.txt", "Data/Floor.dds", XMFLOAT3(0, 0, 0),
-		XMFLOAT3(pos[0] * chunk_size, -0.5, pos[1] * chunk_size), XMFLOAT3(chunk_size, chunk_size, chunk_size), geometry_data);
+		XMFLOAT3(pos[0] * CHUNK_SIZE, -0.5, pos[1] * CHUNK_SIZE), XMFLOAT3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE), geometry_data);
 	num_objects++;
 
 	// Setup npcs:
@@ -42,7 +42,7 @@ void Chunk::SetupObjects(ID3D11Device* device, int x, int y, std::ostream& geome
 	for (int i = 0; i < num_npcs; i++)
 	{
 		npc.push_back(new NPC());
-		npc[i]->Create(device, "Data/Cube.txt", "Data/npc.dds", pos[0] * chunk_size, pos[1] * chunk_size, geometry_data);
+		npc[i]->Create(device, "Data/Cube.txt", "Data/npc.dds", pos[0] * CHUNK_SIZE, pos[1] * CHUNK_SIZE, geometry_data);
 		x_pos += 3;
 		num_objects++;
 	}
@@ -53,7 +53,7 @@ void Chunk::LoadObjects(ID3D11Device* device, int x, int y, std::istream& geomet
 	pos[0] = x, pos[1] = y;
 	floor = new Model;
 	floor->Load(device,  "Data/Floor.dds", XMFLOAT3(0, 0, 0),
-		XMFLOAT3(pos[0] * chunk_size, -0.5, pos[1] * chunk_size), XMFLOAT3(chunk_size, chunk_size, chunk_size), geometry_data);
+		XMFLOAT3(pos[0] * CHUNK_SIZE, -0.5, pos[1] * CHUNK_SIZE), XMFLOAT3(CHUNK_SIZE, CHUNK_SIZE, CHUNK_SIZE), geometry_data);
 	num_objects++;
 
 	srand(time(NULL));
@@ -62,7 +62,7 @@ void Chunk::LoadObjects(ID3D11Device* device, int x, int y, std::istream& geomet
 	for (int i = 0; i < num_npcs; i++)
 	{
 		npc.push_back(new NPC());
-		npc[i]->Load(device, "Data/npc.dds", pos[0] * chunk_size, pos[1] * chunk_size, geometry_data, npc_data);
+		npc[i]->Load(device, "Data/npc.dds", pos[0] * CHUNK_SIZE, pos[1] * CHUNK_SIZE, geometry_data, npc_data);
 		x_pos += 3;
 		num_objects++;
 	}
@@ -129,13 +129,13 @@ void Chunk::Render(ID3D11DeviceContext* deviceContext, LightShaderClass* light_s
 bool Chunk::CheckRange(XMFLOAT3 player_pos)
 {
 	XMFLOAT3 top_left = XMFLOAT3(floor->Position().x, 0, floor->Position().z);
-	XMFLOAT3 top_right = XMFLOAT3(floor->Position().x + chunk_size, 0, floor->Position().z);
-	XMFLOAT3 btm_left = XMFLOAT3(floor->Position().x, 0, floor->Position().z + chunk_size);
-	XMFLOAT3 btm_right = XMFLOAT3(floor->Position().x + chunk_size, 0, floor->Position().z + chunk_size);
-	if (sqrt(pow(player_pos.x - top_left.x, 2) + pow(player_pos.z - top_left.z, 2)) < chunk_size) return true;
-	if (sqrt(pow(player_pos.x - top_right.x, 2) + pow(player_pos.z - top_right.z, 2)) < chunk_size) return true;
-	if (sqrt(pow(player_pos.x - btm_left.x, 2) + pow(player_pos.z - btm_left.z, 2)) < chunk_size) return true;
-	if (sqrt(pow(player_pos.x - btm_right.x, 2) + pow(player_pos.z - btm_right.z, 2)) < chunk_size) return true;
+	XMFLOAT3 top_right = XMFLOAT3(floor->Position().x + CHUNK_SIZE, 0, floor->Position().z);
+	XMFLOAT3 btm_left = XMFLOAT3(floor->Position().x, 0, floor->Position().z + CHUNK_SIZE);
+	XMFLOAT3 btm_right = XMFLOAT3(floor->Position().x + CHUNK_SIZE, 0, floor->Position().z + CHUNK_SIZE);
+	if (sqrt(pow(player_pos.x - top_left.x, 2) + pow(player_pos.z - top_left.z, 2)) < CHUNK_SIZE) return true;
+	if (sqrt(pow(player_pos.x - top_right.x, 2) + pow(player_pos.z - top_right.z, 2)) < CHUNK_SIZE) return true;
+	if (sqrt(pow(player_pos.x - btm_left.x, 2) + pow(player_pos.z - btm_left.z, 2)) < CHUNK_SIZE) return true;
+	if (sqrt(pow(player_pos.x - btm_right.x, 2) + pow(player_pos.z - btm_right.z, 2)) < CHUNK_SIZE) return true;
 	return false;
 }
 

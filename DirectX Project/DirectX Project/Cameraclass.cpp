@@ -32,9 +32,6 @@ void CameraClass::Render(XMVECTOR player_pos)
 {
 	static float phi = XM_PI / 2;
 	float Cx, Cy, Cz;
-	//std::stringstream ss;
-	//ss << "Theta: " << theta << std::endl;
-	//OutputDebugString(ss.str().c_str());
 	phi = rotation.y / 10;
 	Cx = distance * cosf(((3.0f * XM_PI) / 2.0f) * ((rotation.x / 3) / 90)) * sinf(phi);
 	Cy = distance * cosf(phi);
@@ -46,7 +43,6 @@ void CameraClass::Render(XMVECTOR player_pos)
 	m_viewMatrix = XMMatrixLookAtLH(XMLoadFloat3(&position), player_pos, XMLoadFloat3(&up));
 }
 
-/// Provide updated view matrix to calling functions after the Render function has been called to create the view matrix.
 void CameraClass::GetViewMatrix(XMMATRIX& viewMatrix)
 {
 	viewMatrix = m_viewMatrix;

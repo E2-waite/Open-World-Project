@@ -15,9 +15,9 @@ XMINT2& Node::Pos()
 	return position;
 }
 
-bool Node::Pathable()
+XMINT2& Node::Parent()
 {
-	return !filled;
+	return parent;
 }
 
 int& Node::GCost()
@@ -33,14 +33,4 @@ int& Node::HCost()
 int Node::FCost()
 {
 	return g_cost + h_cost;
-}
-
-void Node::SetParent(Node node)
-{
-	parent = &node;
-}
-
-Node Node::GetParent()
-{
-	return *parent;
 }

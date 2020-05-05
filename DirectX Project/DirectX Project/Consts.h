@@ -22,9 +22,10 @@ struct GridPos
 	int x, y;
 };
 
-const int MaxBuffers = 128;
-const int chunk_size = 100;
-const int chunks_x = 2, chunks_y = 2;
-const int node_density = 10;
-const std::string buffer_file = "Data/BinaryFiles/Geometry.bin";
-const std::string transform_file = "Data/BinaryFiles/Transforms.bin";
+const int MAX_BUFFERS = 128;
+const int CHUNK_SIZE = 100;
+const int CHUNKS_X = 2, CHUNKS_Y = 2;
+const int NODE_DENSITY = 10;
+const float MAX_ANGLE = 30, MIN_ANGLE = 20;
+const std::string BUFFER_FILE = "Data/BinaryFiles/Geometry.bin";
+const std::string TRANSFORMATION_FILE = "Data/BinaryFiles/Transforms.bin";

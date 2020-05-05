@@ -34,14 +34,14 @@ void NPC::Create(ID3D11Device* device, const char* modelFilename, const char* te
 	model = new Model;
 
 	// Initialize model in random location within current chunk
-	float rand_x = rand() % chunk_size + 0;
-	float rand_y = rand() % chunk_size + 0;
+	float rand_x = rand() % CHUNK_SIZE + 0;
+	float rand_y = rand() % CHUNK_SIZE + 0;
 	start_pos = XMFLOAT3(rand_x + x_offset, 0, rand_y + y_offset);
 	model->Create(device, modelFilename, textureFilename, XMFLOAT3(0, 0, 0), start_pos, XMFLOAT3(1, 1, 1), os);
 
 	// Find random movement target within current chunk
-	rand_x = rand() % chunk_size + 0;
-	rand_y = rand() % chunk_size + 0;
+	rand_x = rand() % CHUNK_SIZE + 0;
+	rand_y = rand() % CHUNK_SIZE + 0;
 	target_pos = XMFLOAT3(rand_x + x_offset, 0, rand_y + y_offset);
 	float distance = sqrt(pow(target_pos.x - start_pos.x, 2) + pow(target_pos.z - start_pos.z, 2));
 	direction = XMFLOAT3((target_pos.x - start_pos.x) / distance, 0, (target_pos.z - start_pos.z) / distance);
@@ -96,10 +96,10 @@ void NPC::Move(Grid& grid)
 		if (path.size() == 0 || (current_dist.x <= 0.5f && current_dist.z <= 0.5f))
 		{
 			moving = false;
-			float rand_x = rand() % chunk_size + 0;
-			float rand_y = rand() % chunk_size + 0;
+			float rand_x = rand() % CHUNK_SIZE + 0;
+			float rand_y = rand() % CHUNK_SIZE + 0;
 			target_pos = XMFLOAT3(rand_x + x_offset, 0, rand_y + y_offset);
-			//path = grid.MakePath(XMINT2((int)ceil(model->Position().x), (int)ceil(model->Position().z)), XMINT2((int)ceil(target_pos.x), (int)ceil(target_pos.z)));
+			path = grid.MakePath(XMINT2((int)ceil(model->Position().x), (int)ceil(model->Position().z)), XMINT2((int)ceil(target_pos.x), (int)ceil(target_pos.z)));
 			//start_pos = model->Position();
 			//float distance = sqrt(pow(target_pos.x - start_pos.x, 2) + pow(target_pos.z - start_pos.z, 2));
 			//direction = XMFLOAT3((target_pos.x - start_pos.x) / distance, 0, (target_pos.z - start_pos.z) / distance);

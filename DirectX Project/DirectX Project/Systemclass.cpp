@@ -180,16 +180,9 @@ bool SystemClass::Frame()
 	float x_diff = m_Input->MousePos().x - last_pos.x;
 	float y_diff = m_Input->MousePos().y - last_pos.y;
 	last_pos = m_Input->MousePos();
-	// Get the location of the mouse from the input object,
-	if (m_Input->MouseClicked())
-	{
-		m_Graphics->TurnCam(x_diff);
-	}
-	else
-	{
-		m_Graphics->TurnPlayer(x_diff);
-	}
 
+	m_Graphics->TurnCam(y_diff / 10);
+	m_Graphics->TurnPlayer(x_diff);
 
 	result = m_Graphics->Update();
 	if (!result)

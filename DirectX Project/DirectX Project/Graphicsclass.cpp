@@ -52,26 +52,26 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 	player = new Player;
 	// Dynamically set up 2D chunk array
-	chunk = new Chunk*[chunks_x];
-	for (int i = 0; i < chunks_x; ++i)
-		chunk[i] = new Chunk[chunks_y];
-	int num_chunks = chunks_x * chunks_y;
+	chunk = new Chunk*[CHUNKS_X];
+	for (int i = 0; i < CHUNKS_X; ++i)
+		chunk[i] = new Chunk[CHUNKS_Y];
+	int num_chunks = CHUNKS_X * CHUNKS_Y;
 
 	grid = new Grid();
-	grid->Initialize(XMINT2(chunks_x * node_density, chunks_y * node_density));
+	grid->Initialize(XMINT2(CHUNKS_X * NODE_DENSITY, CHUNKS_Y * NODE_DENSITY));
 
 	std::stringstream ss;
 	ss << "Num chunks: " << num_chunks << std::endl;
 
-	if (FileExists(buffer_file))
+	if (FileExists(BUFFER_FILE))
 	{
-		std::ifstream bin_read(buffer_file, std::ios::binary);
+		std::ifstream bin_read(BUFFER_FILE, std::ios::binary);
 		int read_num;
 		bin_read.read((char*)&read_num, sizeof(int));
 
 		ss << "Read num: " << read_num << std::endl;
 		OutputDebugString(ss.str().c_str());
-		if (read_num == num_chunks  && FileExists(transform_file))
+		if (read_num == num_chunks  && FileExists(TRANSFORMATION_FILE))
 		{
 			// If read file has the same number of chunks as is required (and the NPC data file exists), load objects from binary
 			LoadObjects(bin_read);
@@ -81,7 +81,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		{
 			// Else create objects from scratch
 			bin_read.close();
-			std::ofstream bin_write(buffer_file, std::ios::trunc | std::ios::binary);
+			std::ofstream bin_write(BUFFER_FILE, std::ios::trunc | std::ios::binary);
 			bin_write.write((char*)&num_chunks, sizeof(int));
 			InitializeObjects(bin_write);
 			bin_write.close();
@@ -90,7 +90,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	else
 	{
 		// If chunk binary file doesn't exist, create one and create objects from scratch
-		std::ofstream bin_write(buffer_file, std::ios::trunc | std::ios::binary);
+		std::ofstream bin_write(BUFFER_FILE, std::ios::trunc | std::ios::binary);
 		bin_write.write((char*)&num_chunks, sizeof(int));
 		InitializeObjects(bin_write);
 		bin_write.close();
@@ -159,9 +159,9 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 void GraphicsClass::InitializeObjects(std::ostream& geometry_data)
 {
 	player->Initialize(m_D3D->GetDevice(), geometry_data);
-	for (int i = 0; i < chunks_x; ++i)
+	for (int i = 0; i < CHUNKS_X; ++i)
 	{
-		for (int j = 0; j < chunks_y; ++j)
+		for (int j = 0; j < CHUNKS_Y; ++j)
 		{
 			chunk[i][j].Initialize(m_D3D->GetDevice(), i, j,  geometry_data);
 		}
@@ -170,11 +170,11 @@ void GraphicsClass::InitializeObjects(std::ostream& geometry_data)
 
 void GraphicsClass::LoadObjects(std::istream& geometry_data)
 {
-	ifstream transform_data(transform_file, std::ios::binary);
+	ifstream transform_data(TRANSFORMATION_FILE, std::ios::binary);
 	player->Load(m_D3D->GetDevice(), geometry_data, transform_data);
-	for (int i = 0; i < chunks_x; ++i)
+	for (int i = 0; i < CHUNKS_X; ++i)
 	{
-		for (int j = 0; j < chunks_y; ++j)
+		for (int j = 0; j < CHUNKS_Y; ++j)
 		{
 			chunk[i][j].Load(m_D3D->GetDevice(), i, j, geometry_data, transform_data);
 		}
@@ -191,9 +191,9 @@ bool GraphicsClass::FileExists(std::string name)
 void GraphicsClass::DeleteChunks()
 {
 	// Delete chunk geometry data from memory
-	for (int i = 0; i < chunks_x; ++i)
+	for (int i = 0; i < CHUNKS_X; ++i)
 	{
-		for (int j = 0; j < chunks_y; ++j)
+		for (int j = 0; j < CHUNKS_Y; ++j)
 		{
 			chunk[i, j]->Delete();
 		}
@@ -203,11 +203,11 @@ void GraphicsClass::DeleteChunks()
 void GraphicsClass::ShutdownObjects()
 {
 	// Shutdown chunk (saving NPC data)
-	ofstream transform_data(transform_file, std::ios::binary);
+	ofstream transform_data(TRANSFORMATION_FILE, std::ios::binary);
 	player->Shutdown(transform_data);
-	for (int i = 0; i < chunks_x; ++i)
+	for (int i = 0; i < CHUNKS_X; ++i)
 	{
-		for (int j = 0; j < chunks_y; ++j)
+		for (int j = 0; j < CHUNKS_Y; ++j)
 		{
 			chunk[i][j].Shutdown(transform_data);
 		}
@@ -282,15 +282,15 @@ bool GraphicsClass::Update()
 	//	}
 	//}
 
-	for (int i = 0; i < chunks_x; ++i)
+	for (int i = 0; i < CHUNKS_X; ++i)
 	{
-		for (int j = 0; j < chunks_y; ++j)
+		for (int j = 0; j < CHUNKS_Y; ++j)
 		{
 			if (chunk[i][j].CheckRange(player->Position()))
 			{
 				if (!chunk[i][j].Loaded())
 				{
-					std::ifstream bin_file(buffer_file, std::ios::binary);
+					std::ifstream bin_file(BUFFER_FILE, std::ios::binary);
 					chunk[i][j].LoadChunk(m_D3D->GetDevice(), bin_file);
 					bin_file.close();
 				}
@@ -331,10 +331,10 @@ bool GraphicsClass::Update()
 	if (npc_check == chunk[x_check, y_check]->NPCs().size() - 1)
 	{
 		npc_check = 0;
-		if (x_check == chunks_x - 1)
+		if (x_check == CHUNKS_X - 1)
 		{
 			x_check = 0;
-			if (y_check == chunks_y - 1)
+			if (y_check == CHUNKS_Y - 1)
 			{
 				y_check = 0;
 			}
@@ -388,9 +388,9 @@ bool GraphicsClass::Render(float rotation)
 	m_D3D->GetOrthoMatrix(orthoMatrix);
 	
 	// Render chunks if player is in range
-	for (int i = 0; i < chunks_x; ++i)
+	for (int i = 0; i < CHUNKS_X; ++i)
 	{
-		for (int j = 0; j < chunks_y; ++j)
+		for (int j = 0; j < CHUNKS_Y; ++j)
 		{
 			if (chunk[i][j].Loaded())
 			{
@@ -426,9 +426,6 @@ bool GraphicsClass::Render(float rotation)
 void GraphicsClass::MovePlayerZ(float val)
 {
 	XMFLOAT3 forward = player->Forward();
-	//std::stringstream ss;
-	//ss << "Rot x: " << m_Camera->Rotation().x << std::endl;
-	//OutputDebugString(ss.str().c_str());
 	player->Position().x += (forward.x * val) / 100;
 	player->Position().z += (forward.z * val) / 100;
 }
@@ -453,8 +450,9 @@ void GraphicsClass::TurnPlayer(float angle)
 
 void GraphicsClass::TurnCam(float angle)
 {
-	m_Camera->Rotation().x += angle;
-	//std::stringstream ss;
-	//ss << "Rot x: " << m_Camera->Rotation().x << std::endl;
-	//OutputDebugString(ss.str().c_str());
+	if (m_Camera->Rotation().y + angle < MAX_ANGLE &&
+		m_Camera->Rotation().y + angle > MIN_ANGLE)
+	{
+		m_Camera->Rotation().y += angle;
+	}
 }
