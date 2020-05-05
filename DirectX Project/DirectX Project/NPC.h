@@ -41,6 +41,7 @@ private:
 	Model* model;
 	XMFLOAT3 start_pos;
 	XMFLOAT3 target_pos;
+	XMFLOAT2 path_target;
 	XMFLOAT3 direction;
 	float distance;
 	float speed = 5;

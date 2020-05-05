@@ -66,18 +66,15 @@ std::vector<Node> Grid::MakePath(XMINT2 from_pos, XMINT2 to_pos)
 		if (current_node.Pos().x == end_node.Pos().x &&
 			current_node.Pos().y == end_node.Pos().y)
 		{
-			// If node is at the end, return the path
-			std::vector<Node> path;
-			Node this_node = current_node;
-
-			while (this_node.Pos().x != start_node.Pos().x &&
-				this_node.Pos().y != start_node.Pos().y)
+			std::vector<Node> nodes;
+			while (current_node.HasParent())
 			{
-				path.insert(path.begin(), this_node);
-				this_node = node_grid[this_node.Parent().x][this_node.Parent().y];
+				nodes.insert(nodes.begin(), current_node);
+				current_node = current_node.GetParent();
 			}
-
-			return path;
+			XMINT2 start_pos = start_node.Pos();
+			XMINT2 end_pos = end_node.Pos();
+			return nodes;
 		}
 
 		std::vector<Node> neighbours;
@@ -119,7 +116,7 @@ std::vector<Node> Grid::MakePath(XMINT2 from_pos, XMINT2 to_pos)
 			{
 				neighbours[i].GCost() = move_cost;
 				neighbours[i].HCost() = ManhattenDistance(neighbours[i], end_node);
-				neighbours[i].Parent() = current_node.Pos();
+				neighbours[i].SetParent(current_node);
 				if (!in_open)
 				{
 					open_list.push_back(neighbours[i]);
@@ -127,6 +124,8 @@ std::vector<Node> Grid::MakePath(XMINT2 from_pos, XMINT2 to_pos)
 			}
 		}
 	}
+	std::vector<Node> empty;
+	return empty;
 }
 
 int Grid::ManhattenDistance(Node start, Node end)

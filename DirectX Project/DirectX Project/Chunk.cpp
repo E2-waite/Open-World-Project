@@ -102,7 +102,6 @@ void Chunk::LoadChunk(ID3D11Device* device, std::istream& geometry_data)
 
 void Chunk::Update(Grid& grid)
 {
-	npc[0]->Frame(grid);
 	for (int i = 0; i < num_npcs; i++)
 	{
 		npc[i]->Frame(grid);

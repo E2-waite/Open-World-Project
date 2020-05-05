@@ -271,16 +271,15 @@ bool GraphicsClass::Update()
 		rotation -= 360.0f;
 	}
 
-	chunk[0][0].Update(*grid);
 	m_Camera->Rotation().x = -player->Rotation().x;
 	player->Update(m_Camera->Position());
-	//for (int i = 0; i < chunks_x; ++i)
-	//{
-	//	for (int j = 0; j < chunks_y; ++j)
-	//	{
-	//		chunk[i][j].Update();
-	//	}
-	//}
+	for (int i = 0; i < CHUNKS_X; ++i)
+	{
+		for (int j = 0; j < CHUNKS_Y; ++j)
+		{
+			chunk[i][j].Update(*grid);
+		}
+	}
 
 	for (int i = 0; i < CHUNKS_X; ++i)
 	{

@@ -85,27 +85,38 @@ void NPC::Frame(Grid& grid)
 
 void NPC::Move(Grid& grid)
 {
-	XMFLOAT3 current_dist = XMFLOAT3(model->Position().x - target_pos.x, 0, model->Position().z - target_pos.z);
+	XMFLOAT3 current_dist = XMFLOAT3(model->Position().x - path_target.x, 0, model->Position().z - path_target.y);
 	std::vector<Node> path;
 	if (moving)
 	{
-		//model->Position().x += (direction.x * speed * elapsed);
-		//model->Position().z += (direction.z * speed * elapsed);
-		//model->LookAt(target_pos);
-		
-		if (path.size() == 0 || (current_dist.x <= 0.5f && current_dist.z <= 0.5f))
+		model->Position().x += (direction.x * speed * elapsed);
+		model->Position().z += (direction.z * speed * elapsed);
+		model->LookAt(target_pos);
+		if (path.empty() && !moving)
 		{
-			moving = false;
 			float rand_x = rand() % CHUNK_SIZE + 0;
 			float rand_y = rand() % CHUNK_SIZE + 0;
 			target_pos = XMFLOAT3(rand_x + x_offset, 0, rand_y + y_offset);
 			path = grid.MakePath(XMINT2((int)ceil(model->Position().x), (int)ceil(model->Position().z)), XMINT2((int)ceil(target_pos.x), (int)ceil(target_pos.z)));
-			//start_pos = model->Position();
-			//float distance = sqrt(pow(target_pos.x - start_pos.x, 2) + pow(target_pos.z - start_pos.z, 2));
-			//direction = XMFLOAT3((target_pos.x - start_pos.x) / distance, 0, (target_pos.z - start_pos.z) / distance);
+			if (!path.empty())
+			{
+				path_target = XMFLOAT2(path[0].Pos().x, path[0].Pos().y);
+				moving = true;
+			}
+		}
+		if (current_dist.x <= 0.5f && current_dist.z <= 0.5f)
+		{
+			moving = false;
+			if (path.empty())
+			{
+				return;
+			}
+			path_target = XMFLOAT2(path[0].Pos().x, path[0].Pos().y);
 
-			
-			//moving = true;
+			start_pos = model->Position();
+			float distance = sqrt(pow(path_target.x - start_pos.x, 2) + pow(path_target.y - start_pos.z, 2));
+			direction = XMFLOAT3((path_target.x - start_pos.x) / distance, 0, (path_target.y - start_pos.z) / distance);
+			moving = true;
 		}
 	}
 }
