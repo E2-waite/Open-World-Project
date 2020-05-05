@@ -3,11 +3,13 @@
 #include <iostream>  
 #include <string>  
 #include <DirectXMath.h>
+#include <vector>
 #include "Model.h"
 #include "NPC.h"
 #include "Lightshaderclass.h"
 #include "Lightclass.h"
 #include "Consts.h"
+#include "Grid.h"
 using namespace DirectX;
 class Chunk
 {
@@ -21,13 +23,16 @@ public:
 	void Shutdown(std::ostream&);
 	void Delete();
 	void LoadChunk(ID3D11Device*, std::istream&);
-	void Update();
+	void Update(Grid&);
 	void Render(ID3D11DeviceContext*, LightShaderClass*, LightClass*, XMMATRIX, XMMATRIX);
 	bool CheckRange(XMFLOAT3);
 	bool Loaded();
+	void KillNPC(int num);
+	std::vector <NPC*> NPCs();
+	int NumNPCs();
 private:
 	Model* floor;
-	NPC* npc;
+	std::vector <NPC *> npc;
 	int num_npcs = 10;
 	int pos[2];
 	int num_objects = 0;

@@ -46,6 +46,7 @@ private:
 
 	InputClass* m_Input;
 	GraphicsClass* m_Graphics;
+	XMFLOAT3 last_pos = XMFLOAT3(0, 0, 0);
 };
 
 

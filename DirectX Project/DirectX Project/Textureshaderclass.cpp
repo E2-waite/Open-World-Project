@@ -1,6 +1,3 @@
-////////////////////////////////////////////////////////////////////////////////
-// Filename: textureshaderclass.cpp
-////////////////////////////////////////////////////////////////////////////////
 #include "textureshaderclass.h"
 
 TextureShaderClass::TextureShaderClass()
@@ -263,7 +260,7 @@ void TextureShaderClass::OutputShaderErrorMessage(ID3D10Blob* errorMessage, HWND
 {
 	char* compileErrors;
 	unsigned long bufferSize, i;
-	ofstream fout;
+	std::ofstream fout;
 
 	// Get a pointer to the error message text buffer.
 	compileErrors = (char*)(errorMessage->GetBufferPointer());

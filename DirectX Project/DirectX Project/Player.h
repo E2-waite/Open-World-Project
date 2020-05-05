@@ -20,8 +20,12 @@ public:
 	void Render(ID3D11DeviceContext*, LightShaderClass* light_shader, LightClass* light, XMMATRIX view_matrix, XMMATRIX projection_matrix);
 	void Update();
 	XMFLOAT3& Position();
+	XMFLOAT3& Rotation();
+	XMFLOAT3 Direction(XMFLOAT3 cam_pos);
+	float Normalize(float val, float max, float min);
 private:
 	Model* model;
+	XMFLOAT3 direction;
 };
 
 

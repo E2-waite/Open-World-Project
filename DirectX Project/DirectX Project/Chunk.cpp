@@ -37,12 +37,12 @@ void Chunk::SetupObjects(ID3D11Device* device, int x, int y, std::ostream& geome
 	num_objects++;
 
 	// Setup npcs:
-	npc = new NPC[num_npcs];
 	srand(time(NULL));
 	float x_pos = 0;
 	for (int i = 0; i < num_npcs; i++)
 	{
-		npc[i].Create(device, "Data/Cube.txt", "Data/npc.dds", pos[0] * chunk_size, pos[1] * chunk_size, geometry_data);
+		npc.push_back(new NPC());
+		npc[i]->Create(device, "Data/Cube.txt", "Data/npc.dds", pos[0] * chunk_size, pos[1] * chunk_size, geometry_data);
 		x_pos += 3;
 		num_objects++;
 	}
@@ -56,12 +56,13 @@ void Chunk::LoadObjects(ID3D11Device* device, int x, int y, std::istream& geomet
 		XMFLOAT3(pos[0] * chunk_size, -0.5, pos[1] * chunk_size), XMFLOAT3(chunk_size, chunk_size, chunk_size), geometry_data);
 	num_objects++;
 
-	npc = new NPC[num_npcs];
 	srand(time(NULL));
+	npc_data.read((char*)&num_npcs, sizeof(int));
 	float x_pos = 0;
 	for (int i = 0; i < num_npcs; i++)
 	{
-		npc[i].Load(device, "Data/npc.dds", pos[0] * chunk_size, pos[1] * chunk_size, geometry_data, npc_data);
+		npc.push_back(new NPC());
+		npc[i]->Load(device, "Data/npc.dds", pos[0] * chunk_size, pos[1] * chunk_size, geometry_data, npc_data);
 		x_pos += 3;
 		num_objects++;
 	}
@@ -73,16 +74,18 @@ void Chunk::Delete()
 	floor->ShutdownBuffers();
 	for (int i = 0; i < num_npcs; i++)
 	{
-		npc[i].ShutdownBuffers();
+		npc[i]->ShutdownBuffers();
 	}
 }
 
 void Chunk::Shutdown(std::ostream& os)
 {
 	floor->Shutdown(); 
+	int npc_size = npc.size();
+	os.write((char*)&npc_size, sizeof(int));
 	for (int i = 0; i < num_npcs; i++)
 	{
-		npc[i].Shutdown(os);
+		npc[i]->Shutdown(os);
 	}
 }
 
@@ -92,16 +95,17 @@ void Chunk::LoadChunk(ID3D11Device* device, std::istream& geometry_data)
 	floor->LoadBuffers(device, geometry_data);
 	for (int i = 0; i < num_npcs; i++)
 	{
-		npc[i].LoadBuffers(device, geometry_data);
+		npc[i]->LoadBuffers(device, geometry_data);
 	}
 	loaded = true;
 }
 
-void Chunk::Update()
+void Chunk::Update(Grid& grid)
 {
+	npc[0]->Frame(grid);
 	for (int i = 0; i < num_npcs; i++)
 	{
-		npc[i].Frame();
+		npc[i]->Frame(grid);
 	}
 }
 
@@ -115,9 +119,9 @@ void Chunk::Render(ID3D11DeviceContext* deviceContext, LightShaderClass* light_s
 
 		for (int i = 0; i < num_npcs; i++)
 		{
-			npc[i].Render(deviceContext);
-			light_shader->Render(deviceContext, npc[i].GetIndexCount(), npc[i].GetWorldMatrix(), view_matrix,
-				projection_matrix, npc[i].GetTexture(), light->GetDirection(), light->GetAmbientColour(), light->GetDiffuseColour());
+			npc[i]->Render(deviceContext);
+			light_shader->Render(deviceContext, npc[i]->GetIndexCount(), npc[i]->GetWorldMatrix(), view_matrix,
+				projection_matrix, npc[i]->GetTexture(), light->GetDirection(), light->GetAmbientColour(), light->GetDiffuseColour());
 		}
 	}
 }
@@ -136,3 +140,19 @@ bool Chunk::CheckRange(XMFLOAT3 player_pos)
 }
 
 bool Chunk::Loaded() { return loaded; }
+
+std::vector <NPC*> Chunk::NPCs()
+{
+	return npc;
+}
+
+void Chunk::KillNPC(int num)
+{
+	npc[num]->ShutdownBuffers();
+	npc.erase(npc.begin() + num);
+}
+
+int Chunk::NumNPCs()
+{
+	return npc.size();
+}

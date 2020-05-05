@@ -47,4 +47,19 @@ XMFLOAT3& Player::Position()
 	return model->Position();
 }
 
+XMFLOAT3& Player::Rotation()
+{
+	return model->Rotation();
+}
 
+XMFLOAT3 Player::Direction(XMFLOAT3 cam_pos)
+{
+	float x = model->Position().x - cam_pos.x, z = model->Position().z - cam_pos.z;
+	float x_norm = Normalize(x, 0, 1), z_norm = Normalize(z, 0, 1);
+	return XMFLOAT3(x_norm, 0, z_norm);
+}
+
+float Player::Normalize(float val, float min, float max)
+{
+	return (val - min) / (max - min);
+}

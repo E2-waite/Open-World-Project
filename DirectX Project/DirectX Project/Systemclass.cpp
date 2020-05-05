@@ -144,57 +144,54 @@ bool SystemClass::Frame()
 		return false;
 	}
 
-	if (m_Input->CheckKey(DIK_1))
-	{
-
-	}
-	if (m_Input->CheckKey(DIK_2))
-	{
-		//m_Graphics->LoadChunks();
-	}
-	if (m_Input->CheckKey(DIK_3))
-	{
-		//m_Graphics->Write2();
-	}
 	if (m_Input->CheckKey(DIK_W))
 	{
 		m_Graphics->MovePlayer(0, 0.5f);
 	}
-	if (m_Input->CheckKey(DIK_A))
+	//if (m_Input->CheckKey(DIK_A))
+	//{
+	//	m_Graphics->MovePlayer(-0.5, 0);
+	//}
+	//if (m_Input->CheckKey(DIK_S))
+	//{
+	//	m_Graphics->MovePlayer(0, -0.5f);
+	//}
+	//if (m_Input->CheckKey(DIK_D))
+	//{
+	//	m_Graphics->MovePlayer(0.5, 0);
+	//}
+	if (m_Input->CheckKey(DIK_UP))
 	{
-		m_Graphics->MovePlayer(-0.5, 0);
+		m_Graphics->FireProjectile(XMFLOAT3(0, 0, 1));
 	}
-	if (m_Input->CheckKey(DIK_S))
+	if (m_Input->CheckKey(DIK_RIGHT))
 	{
-		m_Graphics->MovePlayer(0, -0.5f);
+		m_Graphics->FireProjectile(XMFLOAT3(1, 0, 0));
 	}
-	if (m_Input->CheckKey(DIK_D))
+	if (m_Input->CheckKey(DIK_DOWN))
 	{
-		m_Graphics->MovePlayer(0.5, 0);
+		m_Graphics->FireProjectile(XMFLOAT3(0, 0, -1));
 	}
-	if (m_Input->CheckKey(DIK_SPACE))
+	if (m_Input->CheckKey(DIK_LEFT))
 	{
-		m_Graphics->CamPosY(0.5f);
-	}
-	if (m_Input->CheckKey(DIK_LSHIFT))
-	{
-		m_Graphics->CamPosY(-0.5f);
-	}
-	if (m_Input->CheckKey(DIK_E))
-	{
-		m_Graphics->CamRotY(1.5f);
-	}
-	if (m_Input->CheckKey(DIK_Q))
-	{
-		m_Graphics->CamRotY(-1.5f);
+		m_Graphics->FireProjectile(XMFLOAT3(-1, 0, 0));
 	}
 
-
+	float x_diff = m_Input->MousePos().x - last_pos.x;
+	float y_diff = m_Input->MousePos().y - last_pos.y;
+	last_pos = m_Input->MousePos();
 	// Get the location of the mouse from the input object,
-	m_Input->GetMouseLocation(mouseX, mouseY);
+	if (m_Input->MouseClicked())
+	{
+		m_Graphics->TurnCam(x_diff);
+	}
+	else
+	{
+		m_Graphics->TurnPlayer(x_diff);
+	}
 
 
-	result = m_Graphics->Update(mouseX, mouseY);
+	result = m_Graphics->Update();
 	if (!result)
 	{
 		return false;

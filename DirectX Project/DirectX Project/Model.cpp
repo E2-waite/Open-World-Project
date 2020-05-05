@@ -40,6 +40,24 @@ void Model::Create(ID3D11Device* device, const char* modelFilename, const char* 
 	XMMatrixIdentity() = m_worldMatrix;
 }
 
+void Model::Create(ID3D11Device* device, const char* modelFilename, const char* textureFilename, XMFLOAT3 rot, XMFLOAT3 pos, XMFLOAT3 scl)
+{
+	bool result;
+	rotation = rot;
+	position = pos;
+	scale = scl;
+	// Load in the model data.
+	result = LoadModel(modelFilename);
+
+	// Initialize the vertex and index buffer that hold the geometry for the triangle.
+	InitializeBuffers(device);
+
+	// Load the texture for this model.
+	result = LoadTexture(device, textureFilename);
+
+	XMMatrixIdentity() = m_worldMatrix;
+}
+
 void Model::Load(ID3D11Device* device, const char* textureFilename, XMFLOAT3 rot, XMFLOAT3 pos, XMFLOAT3 scl, std::istream& is)
 {
 	rotation = rot;
@@ -114,6 +132,33 @@ void Model::InitializeBuffers(ID3D11Device* device, std::ostream& os)
 	BufferData buffers(vertices, indices, m_vertexCount, m_indexCount);
 	buffers.Write(os);
 	SetupBuffers(device, vertices, indices);
+	delete[]vertices;
+	delete[]indices;
+	delete[]m_model;
+	buffers_init = true;
+	buffers_loaded = true;
+}
+
+void Model::InitializeBuffers(ID3D11Device* device)
+{
+	HRESULT result;
+
+	// Create the vertex array.
+	VertexType* vertices = new VertexType[m_vertexCount];
+
+	// Create the index array.
+	unsigned long* indices = new unsigned long[m_indexCount];
+
+
+	// Load the vertex array and index array with data.
+	for (int i = 0; i < m_vertexCount; i++)
+	{
+		vertices[i].position = XMFLOAT3(m_model[i].x, m_model[i].y, m_model[i].z);
+		vertices[i].texture = XMFLOAT2(m_model[i].tu, m_model[i].tv);
+		vertices[i].normal = XMFLOAT3(m_model[i].nx, m_model[i].ny, m_model[i].nz);
+		indices[i] = i;
+	}
+
 	delete[]vertices;
 	delete[]indices;
 	delete[]m_model;
@@ -315,6 +360,7 @@ void Model::ReleaseModel()
 XMFLOAT3& Model::Position() { return position; }
 XMFLOAT3& Model::Rotation() { return rotation; }
 XMFLOAT3& Model::Scale() { return scale; }
+XMFLOAT3& Model::Size() { return size; }
 
 XMMATRIX Model::GetWorldMatrix()
 {

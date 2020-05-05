@@ -14,6 +14,7 @@
 #include <iostream>
 #include <fstream>
 #include <DirectXMath.h>
+#include <vector>
 using namespace DirectX;
 #include "d3dclass.h"
 #include "cameraclass.h"
@@ -25,7 +26,9 @@ using namespace DirectX;
 #include "Chunk.h"
 #include "Player.h"
 #include "Consts.h"
-
+#include "Node.h"
+#include "Grid.h"
+#include "Projectile.h"
 /////////////
 // GLOBALS //
 /////////////
@@ -47,12 +50,11 @@ public:
 	void ShutdownObjects();
 	bool Initialize(int, int, HWND);
 	void Shutdown();
-	bool Update(int,int);
-	void SetCamPos(float, float, float);
+	bool Update();
 	void MovePlayer(float, float);
-	void CamPosY(float);
-	void CamRotX(float);
-	void CamRotY(float);
+	void TurnPlayer(float);
+	void TurnCam(float);
+	void FireProjectile(XMFLOAT3);
 private:
 	bool Render(float);
 	bool FileExists(const std::string);
@@ -62,10 +64,15 @@ private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;
 	Chunk** chunk;
+	Grid* grid;
 	Player* player;
 	LightShaderClass* m_LightShader;
 	TextureShaderClass* m_TextureShader;
 	LightClass* m_Light;
 	BitmapClass* m_Bitmap;
+	std::vector<Projectile*> projectiles;
+	float nodes_x, nodes_y;
+	int num_projectiles = 0;
+	int  x_check = 0, y_check = 0, npc_check = 0;
 };
 #endif

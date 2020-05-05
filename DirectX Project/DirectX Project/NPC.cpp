@@ -68,40 +68,49 @@ void NPC::Load(ID3D11Device* device, const char* textureFilename, int x, int y, 
 
 void NPC::Render(ID3D11DeviceContext* deviceContext)
 {
-	model->Render(deviceContext);
-
+	if (!dead)
+	{
+		model->Render(deviceContext);
+	}
 }
 
-void NPC::Frame()
+void NPC::Frame(Grid& grid)
 {
-	Move();
-	FaceDirection();
+	if (!dead)
+	{
+		Move(grid);
+		FaceDirection();
+	}
 }
 
-void NPC::Move()
+void NPC::Move(Grid& grid)
 {
 	XMFLOAT3 current_dist = XMFLOAT3(model->Position().x - target_pos.x, 0, model->Position().z - target_pos.z);
+	std::vector<Node> path;
 	if (moving)
 	{
-		model->Position().x += (direction.x * speed * elapsed);
-		model->Position().z += (direction.z * speed * elapsed);
+		//model->Position().x += (direction.x * speed * elapsed);
+		//model->Position().z += (direction.z * speed * elapsed);
 		//model->LookAt(target_pos);
 		
-		if (current_dist.x <= 0.5f && current_dist.z <= 0.5f)
+		if (path.size() == 0 || (current_dist.x <= 0.5f && current_dist.z <= 0.5f))
 		{
 			moving = false;
 			float rand_x = rand() % chunk_size + 0;
 			float rand_y = rand() % chunk_size + 0;
 			target_pos = XMFLOAT3(rand_x + x_offset, 0, rand_y + y_offset);
-			start_pos = model->Position();
-			float distance = sqrt(pow(target_pos.x - start_pos.x, 2) + pow(target_pos.z - start_pos.z, 2));
-			direction = XMFLOAT3((target_pos.x - start_pos.x) / distance, 0, (target_pos.z - start_pos.z) / distance);
+			//path = grid.MakePath(XMINT2((int)ceil(model->Position().x), (int)ceil(model->Position().z)), XMINT2((int)ceil(target_pos.x), (int)ceil(target_pos.z)));
+			//start_pos = model->Position();
+			//float distance = sqrt(pow(target_pos.x - start_pos.x, 2) + pow(target_pos.z - start_pos.z, 2));
+			//direction = XMFLOAT3((target_pos.x - start_pos.x) / distance, 0, (target_pos.z - start_pos.z) / distance);
 
 			
-			moving = true;
+			//moving = true;
 		}
 	}
 }
+
+
 
 void NPC::FaceDirection()
 {
@@ -135,4 +144,20 @@ XMMATRIX NPC::GetWorldMatrix()
 ID3D11ShaderResourceView* NPC::GetTexture()
 {
 	return model->GetTexture();
+}
+
+bool NPC::Collided(XMFLOAT3 pos)
+{
+	if (pos.x > model->Position().x&& pos.x < model->Position().x + model->Size().x &&
+		pos.y > model->Position().y&& pos.y < model->Position().y + model->Size().y &&
+		pos.z > model->Position().z&& pos.z < model->Position().z + model->Size().z)
+	{
+		return true;
+	}
+	return false;
+}
+
+void NPC::Kill()
+{
+	dead = true;
 }

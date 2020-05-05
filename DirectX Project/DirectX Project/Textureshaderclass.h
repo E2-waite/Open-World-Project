@@ -12,7 +12,6 @@
 #include <fstream>
 #include <DirectXMath.h>
 using namespace DirectX;
-using namespace std;
 
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: TextureShaderClass

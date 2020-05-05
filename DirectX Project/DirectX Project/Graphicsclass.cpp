@@ -49,9 +49,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		return false;
 	}
 
-	// Set the initial position of the camera.
-	m_Camera->SetPosition(0, 100.0f, 0);
-
 
 	player = new Player;
 	// Dynamically set up 2D chunk array
@@ -59,6 +56,9 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	for (int i = 0; i < chunks_x; ++i)
 		chunk[i] = new Chunk[chunks_y];
 	int num_chunks = chunks_x * chunks_y;
+
+	grid = new Grid();
+	grid->Initialize(XMINT2(chunks_x * node_density, chunks_y * node_density));
 
 	std::stringstream ss;
 	ss << "Num chunks: " << num_chunks << std::endl;
@@ -144,7 +144,6 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 	{
 		return false;
 	}
-
 	// Initialize the bitmap object.
 	result = m_Bitmap->Initialize(m_D3D->GetDevice(), screenWidth, screenHeight, "Data/crate.dds", 256, 256);
 	if (!result)
@@ -261,7 +260,7 @@ void GraphicsClass::Shutdown()
 }
 
 
-bool GraphicsClass::Update(int mouse_x, int mouse_y)
+bool GraphicsClass::Update()
 {
 	bool result;
 	static float rotation = 0.0f;
@@ -272,15 +271,15 @@ bool GraphicsClass::Update(int mouse_x, int mouse_y)
 		rotation -= 360.0f;
 	}
 
-	for (int i = 0; i < chunks_x; ++i)
-	{
-		for (int j = 0; j < chunks_y; ++j)
-		{
-			chunk[i][j].Update();
-		}
-	}
-
-	m_Camera->SetPosition(player->Position().x, m_Camera->GetPosition().y, player->Position().z);
+	chunk[0][0].Update(*grid);
+	m_Camera->Rotation().x = -player->Rotation().x;
+	//for (int i = 0; i < chunks_x; ++i)
+	//{
+	//	for (int j = 0; j < chunks_y; ++j)
+	//	{
+	//		chunk[i][j].Update();
+	//	}
+	//}
 
 	for (int i = 0; i < chunks_x; ++i)
 	{
@@ -305,6 +304,54 @@ bool GraphicsClass::Update(int mouse_x, int mouse_y)
 		}
 	}
 
+
+	// Update projectile and check if it collides with any NPCs
+	if (projectiles.size() > 0)
+	{
+		for (int i = 0; i < projectiles.size(); i++)
+		{
+			projectiles[i]->Update();
+			if (projectiles[i]->Expired())
+			{
+				projectiles[i]->Delete();
+				projectiles.erase(projectiles.begin() + i);
+				continue;
+			}
+
+			if (chunk[x_check, y_check]->Loaded() && chunk[x_check, y_check]->NPCs()[npc_check]->Collided(projectiles[i]->Position()))
+			{
+				chunk[x_check, y_check]->KillNPC(npc_check);
+				projectiles[i]->Delete();
+				projectiles.erase(projectiles.begin() + i);		
+			}
+		}
+	}
+
+	if (npc_check == chunk[x_check, y_check]->NPCs().size() - 1)
+	{
+		npc_check = 0;
+		if (x_check == chunks_x - 1)
+		{
+			x_check = 0;
+			if (y_check == chunks_y - 1)
+			{
+				y_check = 0;
+			}
+			else
+			{
+				y_check++;
+			}
+		}
+		else
+		{
+			x_check++;
+		}
+	}
+	else
+	{
+		npc_check++;
+	}
+
 	// Call the render function each frame
 	result = Render(rotation);
 	if (!result)
@@ -321,7 +368,7 @@ bool GraphicsClass::Render(float rotation)
 	XMFLOAT3 cam_rotation;
 	bool result;
 	float yaw, pitch, roll;
-	cam_rotation = m_Camera->GetRotation();
+	cam_rotation = m_Camera->Rotation();
 
 
 	pitch = cam_rotation.x * 0.0174532925f;
@@ -375,31 +422,31 @@ bool GraphicsClass::Render(float rotation)
 	return true;
 }
 
-void GraphicsClass::SetCamPos(float x, float y, float z)
-{
-	m_Camera->SetPosition(x, y, z);
-}
-
 void GraphicsClass::MovePlayer(float x, float z)
 {
-	player->Position().x += x;
-	player->Position().z += z;
+	XMFLOAT3 dir = player->Direction(m_Camera->Position());
+	//std::stringstream ss;
+	//ss << "Rot x: " << m_Camera->Rotation().x << std::endl;
+	//OutputDebugString(ss.str().c_str());
+	player->Position().x += dir.x / 100;
+	player->Position().z += dir.z / 100;
 }
 
-void GraphicsClass::CamPosY(float y)
+void GraphicsClass::FireProjectile(XMFLOAT3 dir)
 {
-	if ((y > 0 && m_Camera->GetPosition().y < 120) || (y < 0 && m_Camera->GetPosition().y > 40))
-	{
-		m_Camera->SetPosition(m_Camera->GetPosition().x, m_Camera->GetPosition().y + y, m_Camera->GetPosition().z);
-	}
+	projectiles.push_back(new Projectile());
+	projectiles[projectiles.size() - 1]->Initialize(m_D3D->GetDevice(), player->Position(), dir);
 }
 
-void GraphicsClass::CamRotY(float x)
+void GraphicsClass::TurnPlayer(float angle)
 {
-	m_Camera->SetRotation(m_Camera->GetRotation().x + x, m_Camera->GetRotation().y, m_Camera->GetRotation().z);
+	player->Rotation().x += angle;
 }
 
-void GraphicsClass::CamRotX(float y)
+void GraphicsClass::TurnCam(float angle)
 {
-	m_Camera->SetRotation(m_Camera->GetRotation().x, m_Camera->GetRotation().y, m_Camera->GetRotation().z + y);
+	m_Camera->Rotation().x += angle;
+	//std::stringstream ss;
+	//ss << "Rot x: " << m_Camera->Rotation().x << std::endl;
+	//OutputDebugString(ss.str().c_str());
 }

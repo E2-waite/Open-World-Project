@@ -10,6 +10,8 @@
 #pragma comment(lib, "dxguid.lib")
 
 #include <dinput.h>
+#include <DirectXMath.h>
+using namespace DirectX;
 ////////////////////////////////////////////////////////////////////////////////
 // Class name: InputClass
 ////////////////////////////////////////////////////////////////////////////////
@@ -26,8 +28,8 @@ public:
 
 	bool IsEscapePressed();
 	bool CheckKey(char key);
-	void GetMouseLocation(int&, int&);
-
+	XMFLOAT3 MousePos();
+	bool MouseClicked();
 private:
 	bool ReadKeyboard();
 	bool ReadMouse();
@@ -42,7 +44,7 @@ private:
 	DIMOUSESTATE m_mouseState;
 
 	int m_screenWidth, m_screenHeight;
-	int m_mouseX, m_mouseY;
+	XMFLOAT3 mouse_pos;
 };
 
 #endif

@@ -28,8 +28,7 @@ bool InputClass::Initialize(HINSTANCE hinstance, HWND hwnd, int screenWidth, int
 	m_screenHeight = screenHeight;
 
 	// Initialize the location of the mouse on the screen.
-	m_mouseX = 0;
-	m_mouseY = 0;
+	mouse_pos = XMFLOAT3(0, 0, 0);
 
 	// Initialize the main direct input interface.
 	result = DirectInput8Create(hinstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&m_directInput, NULL);
@@ -198,15 +197,15 @@ bool InputClass::ReadMouse()
 void InputClass::ProcessInput()
 {
 	// Update the location of the mouse cursor based on the change of the mouse location during the frame.
-	m_mouseX += m_mouseState.lX;
-	m_mouseY += m_mouseState.lY;
+	mouse_pos.x += m_mouseState.lX;
+	mouse_pos.y += m_mouseState.lY;
 
 	// Ensure the mouse location doesn't exceed the screen width or height.
-	if (m_mouseX < 0) { m_mouseX = 0; }
-	if (m_mouseY < 0) { m_mouseY = 0; }
+	//if (mouse_pos.x < 0) { mouse_pos.x = 0; }
+	//if (mouse_pos.y < 0) { mouse_pos.y = 0; }
 
-	if (m_mouseX > m_screenWidth) { m_mouseX = m_screenWidth; }
-	if (m_mouseY > m_screenHeight) { m_mouseY = m_screenHeight; }
+	//if (mouse_pos.x > m_screenWidth) { mouse_pos.x = m_screenWidth; }
+	//if (mouse_pos.y > m_screenHeight) { mouse_pos.y = m_screenHeight; }
 
 	return;
 }
@@ -231,10 +230,16 @@ bool InputClass::CheckKey(char key)
 	return false;
 }
 
-void InputClass::GetMouseLocation(int& mouseX, int& mouseY)
+XMFLOAT3 InputClass::MousePos()
 {
-	mouseX = m_mouseX;
-	mouseY = m_mouseY;
-	return;
+	return mouse_pos;
 }
 
+bool InputClass::MouseClicked()
+{
+	if (m_mouseState.rgbButtons[0])
+	{
+		return true;
+	}
+	return false;
+}

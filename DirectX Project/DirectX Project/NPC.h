@@ -5,6 +5,7 @@
 #include <d3d11.h>
 #include <DirectXMath.h>
 #include <fstream>
+#include <vector>
 using namespace DirectX;
 using namespace std;
 #include "Lightshaderclass.h"
@@ -14,6 +15,7 @@ using namespace std;
 #include "D3dclass.h"
 #include "Consts.h"
 #include "TransformData.h"
+#include "Grid.h"
 class NPC
 {
 public:
@@ -26,12 +28,15 @@ public:
 	void ShutdownBuffers();
 	void Shutdown(std::ostream&);
 	void Render(ID3D11DeviceContext*);
-	void Frame();
-	void Move();
+	void Frame(Grid&);
+	void Move(Grid&);
+
 	void FaceDirection();
+	bool Collided(XMFLOAT3);
 	int GetIndexCount();
 	XMMATRIX GetWorldMatrix();
 	ID3D11ShaderResourceView* GetTexture();
+	void Kill();
 private:
 	Model* model;
 	XMFLOAT3 start_pos;
@@ -42,5 +47,6 @@ private:
 	float elapsed = 0.01f;
 	bool moving = false;
 	int x_offset, y_offset;
+	bool dead = false;
 };
 

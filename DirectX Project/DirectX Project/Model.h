@@ -31,6 +31,7 @@ public:
 	Model(const Model&);
 	~Model();
 	void Create(ID3D11Device*, const char*, const char*, XMFLOAT3 rot, XMFLOAT3 pos, XMFLOAT3 scl, std::ostream&);
+	void Create(ID3D11Device*, const char*, const char*, XMFLOAT3 rot, XMFLOAT3 pos, XMFLOAT3 scl);
 	void Load(ID3D11Device*, const char*, XMFLOAT3 rot, XMFLOAT3 pos, XMFLOAT3 scl, std::istream&);
 	void LoadBuffers(ID3D11Device* device, std::istream&);
 	void Shutdown();
@@ -38,6 +39,7 @@ public:
 	XMFLOAT3& Position();
 	XMFLOAT3& Rotation();
 	XMFLOAT3& Scale();
+	XMFLOAT3& Size();
 	void UpdateMatrix();
 	int GetIndexCount();
 	XMMATRIX GetWorldMatrix();
@@ -47,6 +49,7 @@ public:
 	void LookAt(XMFLOAT3);
 private:
 	void InitializeBuffers(ID3D11Device*, std::ostream&);
+	void InitializeBuffers(ID3D11Device*);
 	void RenderBuffers(ID3D11DeviceContext*);
 	bool LoadTexture(ID3D11Device*, const char*);
 	void ReleaseTexture();
@@ -62,9 +65,11 @@ private:
 	XMFLOAT3 rotation;
 	XMFLOAT3 position;
 	XMFLOAT3 scale;
+	XMFLOAT3 size;
 	bool buffers_init = false;
 	bool buffers_loaded = false;
 	bool looking_at = false;
+
 };
 
 #endif
