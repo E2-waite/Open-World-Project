@@ -273,6 +273,7 @@ bool GraphicsClass::Update()
 
 	chunk[0][0].Update(*grid);
 	m_Camera->Rotation().x = -player->Rotation().x;
+	player->Update(m_Camera->Position());
 	//for (int i = 0; i < chunks_x; ++i)
 	//{
 	//	for (int j = 0; j < chunks_y; ++j)
@@ -422,14 +423,21 @@ bool GraphicsClass::Render(float rotation)
 	return true;
 }
 
-void GraphicsClass::MovePlayer(float x, float z)
+void GraphicsClass::MovePlayerZ(float val)
 {
-	XMFLOAT3 dir = player->Direction(m_Camera->Position());
+	XMFLOAT3 forward = player->Forward();
 	//std::stringstream ss;
 	//ss << "Rot x: " << m_Camera->Rotation().x << std::endl;
 	//OutputDebugString(ss.str().c_str());
-	player->Position().x += dir.x / 100;
-	player->Position().z += dir.z / 100;
+	player->Position().x += (forward.x * val) / 100;
+	player->Position().z += (forward.z * val) / 100;
+}
+
+void GraphicsClass::MovePlayerX(float val)
+{
+	XMFLOAT3 left = player->Left();
+	player->Position().x += (left.x * val) / 100;
+	player->Position().z += (left.z * val) / 100;
 }
 
 void GraphicsClass::FireProjectile(XMFLOAT3 dir)

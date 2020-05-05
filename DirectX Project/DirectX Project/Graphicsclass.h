@@ -51,7 +51,8 @@ public:
 	bool Initialize(int, int, HWND);
 	void Shutdown();
 	bool Update();
-	void MovePlayer(float, float);
+	void MovePlayerZ(float);
+	void MovePlayerX(float);
 	void TurnPlayer(float);
 	void TurnCam(float);
 	void FireProjectile(XMFLOAT3);

@@ -31,8 +31,12 @@ void Player::Shutdown(std::ostream& os)
 	data.Write(os);
 }
 
-void Player::Update()
+void Player::Update(XMFLOAT3 cam_pos)
 {
+	float x = model->Position().x - cam_pos.x, z = model->Position().z - cam_pos.z;
+	float x_norm = Normalize(x, 0, 1), z_norm = Normalize(z, 0, 1);
+	forward = XMFLOAT3(x_norm, 0, z_norm);
+	left = XMFLOAT3(-forward.z, 0, forward.x);
 }
 
 void Player::Render(ID3D11DeviceContext* deviceContext, LightShaderClass* light_shader, LightClass* light, XMMATRIX view_matrix, XMMATRIX projection_matrix)
@@ -52,11 +56,14 @@ XMFLOAT3& Player::Rotation()
 	return model->Rotation();
 }
 
-XMFLOAT3 Player::Direction(XMFLOAT3 cam_pos)
+XMFLOAT3 Player::Forward()
 {
-	float x = model->Position().x - cam_pos.x, z = model->Position().z - cam_pos.z;
-	float x_norm = Normalize(x, 0, 1), z_norm = Normalize(z, 0, 1);
-	return XMFLOAT3(x_norm, 0, z_norm);
+	return forward;
+}
+
+XMFLOAT3 Player::Left()
+{
+	return left;
 }
 
 float Player::Normalize(float val, float min, float max)

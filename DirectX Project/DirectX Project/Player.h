@@ -18,14 +18,15 @@ public:
 	void Load(ID3D11Device*, std::istream&, std::istream&);
 	void Shutdown(std::ostream&);
 	void Render(ID3D11DeviceContext*, LightShaderClass* light_shader, LightClass* light, XMMATRIX view_matrix, XMMATRIX projection_matrix);
-	void Update();
+	void Update(XMFLOAT3 cam_pos);
 	XMFLOAT3& Position();
 	XMFLOAT3& Rotation();
-	XMFLOAT3 Direction(XMFLOAT3 cam_pos);
+	XMFLOAT3 Forward();
+	XMFLOAT3 Left();
 	float Normalize(float val, float max, float min);
 private:
 	Model* model;
-	XMFLOAT3 direction;
+	XMFLOAT3 forward, left;
 };
 
 
