@@ -33,7 +33,7 @@ public:
 private:
 	Model* floor;
 	std::vector <NPC *> npc;
-	int num_npcs = 10;
+	int num_npcs = 3;
 	int pos[2];
 	int num_objects = 0;
 	float load_range = 25;

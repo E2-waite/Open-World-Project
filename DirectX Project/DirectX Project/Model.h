@@ -63,7 +63,7 @@ private:
 	ModelType* m_model;
 	XMMATRIX m_worldMatrix, look_matrix;
 	XMFLOAT3 rotation;
-	XMFLOAT3 position;
+	XMFLOAT3 position = XMFLOAT3(0,0,0);
 	XMFLOAT3 scale;
 	XMFLOAT3 size;
 	bool buffers_init = false;
