@@ -2,6 +2,7 @@
 #include <DirectXMath.h>
 #include <vector>
 #include <array>
+#include <stdio.h>
 #include "Consts.h"
 #include "Node.h"
 using namespace DirectX;

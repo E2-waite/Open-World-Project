@@ -29,6 +29,13 @@ void Grid::Initialize(XMINT2 size)
 
 std::vector<Node> Grid::MakePath(XMINT2 from_pos, XMINT2 to_pos)
 {
+	if (from_pos.x > (CHUNKS_X * NODE_DENSITY) - 1 || from_pos.y > (CHUNKS_Y * NODE_DENSITY) - 1 ||
+		from_pos.x < 0 || from_pos.y < 0)
+	{
+		// Deletes transform file if value is read wrong (strange bug rarely occurs causing NPC position to be set to really high value)
+		remove((char*)&TRANSFORMATION_FILE);
+	}
+
 	Node node_grid[CHUNKS_X * NODE_DENSITY][CHUNKS_Y * NODE_DENSITY];
 
 	for (int x = 0; x < grid_size.x; x++)
@@ -38,6 +45,8 @@ std::vector<Node> Grid::MakePath(XMINT2 from_pos, XMINT2 to_pos)
 			node_grid[x][y].Pos() = XMINT2(x, y);
 		}
 	}
+
+
 
 	Node end_node = node_grid[(int)ceil(to_pos.x / NODE_DENSITY)][(int)ceil(to_pos.y / NODE_DENSITY)];
 	Node start_node = node_grid[(int)ceil(from_pos.x / NODE_DENSITY)][(int)ceil(from_pos.y / NODE_DENSITY)];
