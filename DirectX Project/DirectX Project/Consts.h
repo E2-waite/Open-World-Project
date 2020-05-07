@@ -24,8 +24,8 @@ struct GridPos
 
 const int MAX_BUFFERS = 128;
 const int CHUNK_SIZE = 100;
-const int CHUNKS_X = 3, CHUNKS_Y = 3;
-const int NUM_NPCS = 6;
+const int CHUNKS_X = 4, CHUNKS_Y = 4;
+const int NUM_NPCS = 2;
 const int NODE_DENSITY = 10;
 const float MAX_ANGLE = 30, MIN_ANGLE = 20;
 const std::string BUFFER_FILE = "Data/BinaryFiles/Geometry.bin";

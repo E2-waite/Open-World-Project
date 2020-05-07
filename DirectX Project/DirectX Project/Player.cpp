@@ -10,10 +10,10 @@ Player::~Player()
 
 }
 
-void Player::Initialize(ID3D11Device* device, std::ostream& os)
+void Player::Initialize(ID3D11Device* device, std::ostream& os, XMFLOAT3 pos)
 {
 	model = new Model;
-	model->Create(device, "Data/Cube.txt", "Data/Player.dds", XMFLOAT3(0, 0, 0), XMFLOAT3(0, 0, 0), XMFLOAT3(1, 1, 1), os);
+	model->Create(device, "Data/Cube.txt", "Data/Player.dds", XMFLOAT3(0, 0, 0), pos, XMFLOAT3(1, 1, 1), os);
 }
 
 void Player::Load(ID3D11Device* device, std::istream& is, std::istream& t_data)

@@ -171,7 +171,7 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 
 void GraphicsClass::InitializeObjects(std::ostream& geometry_data)
 {
-	player->Initialize(m_D3D->GetDevice(), geometry_data);
+	player->Initialize(m_D3D->GetDevice(), geometry_data, XMFLOAT3((CHUNKS_X * CHUNK_SIZE) / 2, 0, (CHUNKS_Y * CHUNK_SIZE) / 2));
 	for (int i = 0; i < CHUNKS_X; ++i)
 	{
 		for (int j = 0; j < CHUNKS_Y; ++j)

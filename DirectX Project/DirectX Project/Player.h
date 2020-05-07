@@ -14,7 +14,7 @@ class Player
 public:
 	Player();
 	~Player();
-	void Initialize(ID3D11Device*, std::ostream&);
+	void Initialize(ID3D11Device*, std::ostream&, XMFLOAT3);
 	void Load(ID3D11Device*, std::istream&, std::istream&);
 	void Shutdown(std::ostream&);
 	void Render(ID3D11DeviceContext*, LightShaderClass* light_shader, LightClass* light, XMMATRIX view_matrix, XMMATRIX projection_matrix);

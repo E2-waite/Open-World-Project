@@ -57,7 +57,6 @@ void Chunk::LoadObjects(ID3D11Device* device, int x, int y, std::istream& geomet
 	num_objects++;
 
 	srand(time(NULL));
-	npc_data.read((char*)&NUM_NPCS, sizeof(int));
 	float x_pos = 0;
 	for (int i = 0; i < NUM_NPCS; i++)
 	{
@@ -81,8 +80,6 @@ void Chunk::Delete()
 void Chunk::Shutdown(std::ostream& os)
 {
 	floor->Shutdown(); 
-	int npc_size = npc.size();
-	os.write((char*)&npc_size, sizeof(int));
 	for (int i = 0; i < NUM_NPCS; i++)
 	{
 		npc[i]->Shutdown(os);
