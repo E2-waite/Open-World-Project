@@ -39,7 +39,7 @@ void Chunk::SetupObjects(ID3D11Device* device, int x, int y, std::ostream& geome
 	// Setup npcs:
 	srand(time(NULL));
 	float x_pos = 0;
-	for (int i = 0; i < num_npcs; i++)
+	for (int i = 0; i < NUM_NPCS; i++)
 	{
 		npc.push_back(new NPC());
 		npc[i]->Create(device, "Data/Cube.txt", "Data/npc.dds", pos[0] * CHUNK_SIZE, pos[1] * CHUNK_SIZE, geometry_data);
@@ -57,9 +57,9 @@ void Chunk::LoadObjects(ID3D11Device* device, int x, int y, std::istream& geomet
 	num_objects++;
 
 	srand(time(NULL));
-	npc_data.read((char*)&num_npcs, sizeof(int));
+	npc_data.read((char*)&NUM_NPCS, sizeof(int));
 	float x_pos = 0;
-	for (int i = 0; i < num_npcs; i++)
+	for (int i = 0; i < NUM_NPCS; i++)
 	{
 		npc.push_back(new NPC());
 		npc[i]->Load(device, "Data/npc.dds", pos[0] * CHUNK_SIZE, pos[1] * CHUNK_SIZE, geometry_data, npc_data);
@@ -72,7 +72,7 @@ void Chunk::Delete()
 {
 	loaded = false;
 	floor->ShutdownBuffers();
-	for (int i = 0; i < num_npcs; i++)
+	for (int i = 0; i < NUM_NPCS; i++)
 	{
 		npc[i]->ShutdownBuffers();
 	}
@@ -83,7 +83,7 @@ void Chunk::Shutdown(std::ostream& os)
 	floor->Shutdown(); 
 	int npc_size = npc.size();
 	os.write((char*)&npc_size, sizeof(int));
-	for (int i = 0; i < num_npcs; i++)
+	for (int i = 0; i < NUM_NPCS; i++)
 	{
 		npc[i]->Shutdown(os);
 	}
@@ -93,7 +93,7 @@ void Chunk::LoadChunk(ID3D11Device* device, std::istream& geometry_data)
 {
 	geometry_data.seekg(read_pos);
 	floor->LoadBuffers(device, geometry_data);
-	for (int i = 0; i < num_npcs; i++)
+	for (int i = 0; i < NUM_NPCS; i++)
 	{
 		npc[i]->LoadBuffers(device, geometry_data);
 	}
@@ -104,7 +104,7 @@ void Chunk::Update(Grid& grid)
 {
 	if (loaded)
 	{
-		for (int i = 0; i < num_npcs; i++)
+		for (int i = 0; i < NUM_NPCS; i++)
 		{
 			npc[i]->Frame(grid);
 		}
@@ -119,7 +119,7 @@ void Chunk::Render(ID3D11DeviceContext* deviceContext, LightShaderClass* light_s
 		light_shader->Render(deviceContext, floor->GetIndexCount(), floor->GetWorldMatrix(), view_matrix,
 			projection_matrix, floor->GetTexture(), light->GetDirection(), light->GetAmbientColour(), light->GetDiffuseColour());
 
-		for (int i = 0; i < num_npcs; i++)
+		for (int i = 0; i < NUM_NPCS; i++)
 		{
 			npc[i]->Render(deviceContext);
 			light_shader->Render(deviceContext, npc[i]->GetIndexCount(), npc[i]->GetWorldMatrix(), view_matrix,

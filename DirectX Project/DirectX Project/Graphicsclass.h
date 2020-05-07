@@ -60,7 +60,7 @@ private:
 	bool Render(float);
 	bool FileExists(const std::string);
 	void InitializeObjects(std::ostream&);
-	void LoadObjects(std::istream&);
+	void LoadObjects(std::istream&, std::istream&);
 private:
 	D3DClass* m_D3D;
 	CameraClass* m_Camera;

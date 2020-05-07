@@ -73,9 +73,22 @@ bool GraphicsClass::Initialize(int screenWidth, int screenHeight, HWND hwnd)
 		OutputDebugString(ss.str().c_str());
 		if (read_num == num_chunks  && FileExists(TRANSFORMATION_FILE))
 		{
-			// If read file has the same number of chunks as is required (and the NPC data file exists), load objects from binary
-			LoadObjects(bin_read);
+			ifstream transform_data(TRANSFORMATION_FILE, std::ios::binary);
+			transform_data.read((char*)&read_num, sizeof(int));
+			if (read_num == NUM_NPCS)
+			{
+				// If read file has the same number of chunks as is required (and the NPC data file exists), load objects from binary
+				LoadObjects(bin_read, transform_data);
+			}
+			else
+			{
+				std::ofstream bin_write(BUFFER_FILE, std::ios::trunc | std::ios::binary);
+				bin_write.write((char*)&num_chunks, sizeof(int));
+				InitializeObjects(bin_write);
+				bin_write.close();
+			}
 			bin_read.close();
+			transform_data.close();
 		}
 		else
 		{
@@ -168,9 +181,8 @@ void GraphicsClass::InitializeObjects(std::ostream& geometry_data)
 	}
 }
 
-void GraphicsClass::LoadObjects(std::istream& geometry_data)
+void GraphicsClass::LoadObjects(std::istream& geometry_data, std::istream& transform_data)
 {
-	ifstream transform_data(TRANSFORMATION_FILE, std::ios::binary);
 	player->Load(m_D3D->GetDevice(), geometry_data, transform_data);
 	for (int i = 0; i < CHUNKS_X; ++i)
 	{
@@ -179,7 +191,6 @@ void GraphicsClass::LoadObjects(std::istream& geometry_data)
 			chunk[i][j].Load(m_D3D->GetDevice(), i, j, geometry_data, transform_data);
 		}
 	}
-	transform_data.close();
 }
 
 bool GraphicsClass::FileExists(std::string name)
@@ -204,6 +215,7 @@ void GraphicsClass::ShutdownObjects()
 {
 	// Shutdown chunk (saving NPC data)
 	ofstream transform_data(TRANSFORMATION_FILE, std::ios::binary);
+	transform_data.write((char*)&NUM_NPCS, sizeof(int));
 	player->Shutdown(transform_data);
 	for (int i = 0; i < CHUNKS_X; ++i)
 	{
